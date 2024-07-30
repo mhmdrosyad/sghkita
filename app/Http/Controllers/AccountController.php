@@ -20,7 +20,8 @@ class AccountController extends Controller
     public function index()
     {
         $accounts = $this->accountModel->all();
-        return view('account.index', compact('accounts'));
+        $totalInitialBalance = $accounts->sum('initial_balance');
+        return view('account.index', compact('accounts', 'totalInitialBalance'));
     }
 
     public function store(Request $request)
@@ -72,5 +73,46 @@ class AccountController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'There was an error importing the accounts: ' . $e->getMessage());
         }
+    }
+
+    public function inputBalance()
+    {
+        $accounts = $this->accountModel->all();
+        return view('account.input-balance', compact('accounts'));
+    }
+
+    public function storeInitialBalance(Request $request)
+    {
+        $accountBalances = $request->input('account', []);
+
+        $totalActiva = 0;
+        $totalPassiva = 0;
+
+        foreach ($accountBalances as $code => $balance) {
+            $account = Account::where('code', $code)->first();
+            if ($account) {
+                if ($account->position == 'activa') {
+                    $totalActiva += (float) $balance;
+                } elseif ($account->position == 'passiva') {
+                    $totalPassiva += (float) $balance;
+                }
+            }
+        }
+
+
+        if ($totalActiva !== $totalPassiva) {
+            return redirect()->back()->withErrors(['Saldo tidak sama antara Activa dan Passiva'])->withInput();
+        }
+
+        foreach ($accountBalances as $code => $balance) {
+            $account = Account::where('code', $code)->first();
+            if ($account) {
+                $account->initial_balance = is_null($balance) ? 0 : (float) $balance;
+                $account->current_balance = is_null($balance) ? 0 : (float) $balance;
+                $account->save();
+            }
+        }
+
+        return redirect()->route('account.index')->with('success', 'Saldo awal berhasil disimpan.');
     }
 }

@@ -11,6 +11,11 @@
                         </h2>
                     </div>
                     <div class="right">
+                        @if ($totalInitialBalance == 0)
+                        <a href="{{route('account.inputBalance')}}" class="main-btn warning-btn btn-hover"><i
+                                class="lni lni-plus"></i>Tambah Saldo
+                            Awal</a>
+                        @endif
                         <button type="button" class="main-btn success-btn btn-hover" data-bs-toggle="modal"
                             data-bs-target="#importModal"><i class="lni lni-plus"></i>Import Akun</button>
                         <button type="button" class="main-btn primary-btn btn-hover" data-bs-toggle="modal"
@@ -18,131 +23,90 @@
                     </div>
                 </div>
                 @if ($errors->any())
-                <div>
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
+                <div class="alert-box danger-alert" role="alert">
+                    <div class=" alert">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
                 </div>
                 @endif
                 @if (session('success'))
-                <div class="alert-box success-alert alert-dismissible fade show" role="alert"">
+                <div class="alert-box success-alert" role="alert">
                     <div class=" alert">
-                    <p class="text-medium">
-                        {{ session('success') }}
-                    </p>
+                        <p class="text-medium">
+                            {{ session('success') }}
+                        </p>
+                    </div>
+                </div>
+                @endif
+                <div class="table-wrapper table-responsive">
+                    <table class="table striped-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <h6>Kode</h6>
+                                </th>
+                                <th>
+                                    <h6>Nama Akun</h6>
+                                </th>
+                                <th>
+                                    <h6>Posisi</h6>
+                                </th>
+                                <th>
+                                    <h6>Saldo Awal</h6>
+                                </th>
+                                <th>
+                                    <h6>Saldo Akhir</h6>
+                                </th>
+                                <th>
+                                    <h6>Aksi</h6>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($accounts as $account)
+                            <tr>
+                                <td>
+                                    <p>{{ $account->code }}</p>
+                                </td>
+                                <td>
+                                    <p>{{ $account->name }}</p>
+                                </td>
+                                <td>
+                                    <p class="text-uppercase">
+                                        @if ($account->position === 'activa')
+                                        Aktiva
+                                        @elseif ($account->position === 'passiva')
+                                        Passiva
+                                        @else
+                                        Laba Rugi
+                                        @endif
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>{{ number_format($account->initial_balance, 0, ',', '.') }}</p>
+                                </td>
+                                <td>
+                                    <p>{{ number_format($account->current_balance, 0, ',', '.') }}</p>
+                                </td>
+                                <td>
+                                    <div class="action">
+                                        <button class="text-danger">
+                                            <i class="lni lni-trash-can"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                    <!-- end table -->
                 </div>
             </div>
-            @endif
-            <div class="table-wrapper table-responsive">
-                <table class="table striped-table">
-                    <thead>
-                        <tr>
-                            <th>
-                                <h6>Kode</h6>
-                            </th>
-                            <th>
-                                <h6>Nama Akun</h6>
-                            </th>
-                            <th>
-                                <h6>Posisi</h6>
-                            </th>
-                            <th>
-                                <h6>Saldo Awal</h6>
-                            </th>
-                            <th>
-                                <h6>Saldo Akhir</h6>
-                            </th>
-                            <th>
-                                <h6>Aksi</h6>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($accounts as $account)
-                        <tr>
-                            <td>
-                                <p>{{ $account->code }}</p>
-                            </td>
-                            <td>
-                                <p>{{ $account->name }}</p>
-                            </td>
-                            <td>
-                                <p class="text-uppercase">
-                                    @if ($account->position === 'activa')
-                                    Aktiva
-                                    @elseif ($account->position === 'passiva')
-                                    Passiva
-                                    @else
-                                    Laba Rugi
-                                    @endif
-                                </p>
-                            </td>
-                            <td>
-                                @if($account->initial_balance == 0)
-                                <div>
-                                    <button class="btn badge text-bg-warning d-flex gap-1 align-items-center"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#addInitialBalanceModal-{{$account->code}}">
-                                        <span>Tambah Saldo</span>
-                                        <i class="lni lni-plus"></i>
-                                    </button>
-                                    <div class="modal fade" id="addInitialBalanceModal-{{$account->code}}" tabindex="-1"
-                                        aria-labelledby="addInitialBalanceModalLabel-{{$account->code}}"
-                                        aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h6>Tambah Saldo Awal {{$account->name}}</h6>
-                                                    <button type="button"
-                                                        class="btn d-flex align-items-center fs-4 text-danger"
-                                                        data-bs-dismiss="modal" aria-label="Close"><i
-                                                            class="lni lni-cross-circle"></i></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <form method="post"
-                                                        action="{{route('account.addInitialBalance', $account->code)}}">
-                                                        @csrf
-                                                        <div class="input-style-1">
-                                                            <label>Saldo awal</label>
-                                                            <input name="initial_balance" type="number" required />
-                                                        </div>
-                                                        <div class="col-12 d-flex gap-3">
-                                                            <button type="reset"
-                                                                class="main-btn warning-btn btn-hover"><i
-                                                                    class="lni lni-trash-can"></i></button>
-                                                            <button type="submit"
-                                                                class="main-btn primary-btn btn-hover flex-fill">Tambah</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                @else
-                                <p>{{ number_format($account->initial_balance, 0, ',', '.') }}</p>
-                                @endif
-                            </td>
-                            <td>
-                                <p>{{ number_format($account->current_balance, 0, ',', '.') }}</p>
-                            </td>
-                            <td>
-                                <div class="action">
-                                    <button class="text-danger">
-                                        <i class="lni lni-trash-can"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                <!-- end table -->
-            </div>
         </div>
-    </div>
     </div>
 
     <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
