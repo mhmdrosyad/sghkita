@@ -31,4 +31,9 @@ class Transaction extends Model
     {
         return $this->belongsTo(Category::class, 'category_code', 'code');
     }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
 }
