@@ -20,9 +20,11 @@ Route::middleware('auth')->group(function () {
     Route::prefix('account')->group(function () {
         Route::get('/', [AccountController::class, 'index'])->name('account.index');
         Route::post('/', [AccountController::class, 'store'])->name('account.store');
-        Route::post('{accountCode}/add-initial-balance', [AccountController::class, 'addInitialBalance'])
-            ->name('account.addInitialBalance');
+        Route::post('{accountCode}/add-initial-balance', [AccountController::class, 'addInitialBalance']);
         Route::post('import', [AccountController::class, 'import'])->name('account.import');
+        Route::get('input-balance', [AccountController::class, 'inputBalance'])->name('account.inputBalance');
+        Route::post('initial-balance', [AccountController::class, 'storeInitialBalance'])->name('account.store.initialBalance');
+
     });
 
     Route::prefix('category')->group(function () {
