@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('accounts', function (Blueprint $table) {
             $table->string('code')->primary();
             $table->string('name');
-            $table->enum('position', ['activa', 'passiva', 'income', 'outcome']);
+            $table->enum('position', ['asset', 'liability', 'revenue', 'expense']);
             $table->decimal('initial_balance', 15, 2)->default(0);
             $table->decimal('current_balance', 15, 2)->default(0);
             $table->timestamps();

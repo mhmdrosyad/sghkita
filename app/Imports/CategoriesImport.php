@@ -31,8 +31,8 @@ class CategoriesImport implements ToModel, WithHeadingRow
             'code' => $row['code'],
             'type' => $type,
             'name' => $row['name'],
-            'debet' => $debetAccount->code,
-            'credit' => $creditAccount->code,
+            'debit_account_code' => $debetAccount->code,
+            'credit_account_code' => $creditAccount->code,
         ]);
     }
 }

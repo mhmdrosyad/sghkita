@@ -44,8 +44,8 @@ class CategoryController extends Controller
             'code' => $request->code,
             'name' => $request->name,
             'type' => $request->type,
-            'debet' => $request->debet,
-            'credit' => $request->credit,
+            'debit_account_code' => $request->debet,
+            'credit_account_code' => $request->credit,
             'note' => $request->note,
         ]);
 

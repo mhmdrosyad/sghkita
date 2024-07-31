@@ -29,7 +29,7 @@ class AccountController extends Controller
         $request->validate([
             'code' => 'required|string|unique:accounts,code',
             'name' => 'required|string|max:255',
-            'position' => 'required|in:activa,passiva,income,outcome',
+            'position' => 'required|in:asset,liability,revenue,expense',
         ]);
 
         $this->accountModel->create([

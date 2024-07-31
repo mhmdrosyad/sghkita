@@ -15,13 +15,13 @@ return new class extends Migration
             $table->string('code')->primary();
             $table->enum('type', ['in', 'out', 'mutation']);
             $table->string('name');
-            $table->string('debet')->nullable();
-            $table->string('credit')->nullable();
+            $table->string('debit_account_code')->nullable();
+            $table->string('credit_account_code')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();
 
-            $table->foreign('debet')->references('code')->on('accounts')->onDelete('set null');
-            $table->foreign('credit')->references('code')->on('accounts')->onDelete('set null');
+            $table->foreign('debit_account_code')->references('code')->on('accounts')->onDelete('set null');
+            $table->foreign('credit_account_code')->references('code')->on('accounts')->onDelete('set null');
         });
     }
 

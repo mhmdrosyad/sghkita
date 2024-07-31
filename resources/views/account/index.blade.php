@@ -43,7 +43,7 @@
                 </div>
                 @endif
                 <div class="table-wrapper table-responsive">
-                    <table class="table striped-table">
+                    <table id="account-table" class="table striped-table">
                         <thead>
                             <tr>
                                 <th>
@@ -70,27 +70,27 @@
                             @foreach($accounts as $account)
                             <tr>
                                 <td>
-                                    <p>{{ $account->code }}</p>
+                                    {{ $account->code }}
                                 </td>
                                 <td>
-                                    <p>{{ $account->name }}</p>
+                                    {{ $account->name }}
                                 </td>
                                 <td>
-                                    <p class="text-uppercase">
-                                        @if ($account->position === 'activa')
+                                    <span class="text-uppercase">
+                                        @if ($account->position === 'asset')
                                         Aktiva
-                                        @elseif ($account->position === 'passiva')
+                                        @elseif ($account->position === 'liability')
                                         Passiva
                                         @else
                                         Laba Rugi
                                         @endif
-                                    </p>
+                                    </span>
                                 </td>
                                 <td>
-                                    <p>{{ number_format($account->initial_balance, 0, ',', '.') }}</p>
+                                    {{ number_format($account->initial_balance, 0, ',', '.') }}
                                 </td>
                                 <td>
-                                    <p>{{ number_format($account->current_balance, 0, ',', '.') }}</p>
+                                    {{ number_format($account->current_balance, 0, ',', '.') }}
                                 </td>
                                 <td>
                                     <div class="action">
@@ -143,10 +143,10 @@
                             <div class="select-position">
                                 <select class="text-capitalize" name="position" required>
                                     <option value="" disabled selected>Pilih jenis</option>
-                                    <option value="activa">Aktiva</option>
-                                    <option value="passiva">Passiva</option>
-                                    <option value="income">Laba Rugi (Pendapatan)</option>
-                                    <option value="outcome">Laba Rugi (Biaya)</option>
+                                    <option value="asset">Aktiva</option>
+                                    <option value="liability">Passiva</option>
+                                    <option value="revenue">Laba Rugi (Pendapatan)</option>
+                                    <option value="expense">Laba Rugi (Biaya)</option>
                                 </select>
                             </div>
 
@@ -189,7 +189,9 @@
 
     <x-slot name="scripts">
         <script>
-
+            $(document).ready(function() {
+                $('#account-table').DataTable();
+            });
         </script>
     </x-slot>
 </x-app-layout>

@@ -11,15 +11,16 @@
                         </h2>
                     </div>
                     <div class="right">
-                        <button type="button" class="main-btn secondary-btn btn-hover" data-bs-toggle="modal"
-                            data-bs-target="#mutationModal"><i class="lni lni-plus"></i>Mutasi</button>
+                        {{-- <button type="button" class="main-btn secondary-btn btn-hover" data-bs-toggle="modal"
+                            data-bs-target="#mutationModal"><i class="lni lni-plus"></i>Mutasi</button> --}}
                         <button type="button" class="main-btn primary-btn btn-hover" data-bs-toggle="modal"
-                            data-bs-target="#addModal"><i class="lni lni-plus"></i>Tambah Uang Masuk</button>
+                            data-bs-target="#addModal"><i class="lni lni-plus"></i>Transaksi Masuk</button>
                         <button type="button" class="main-btn warning-btn btn-hover" data-bs-toggle="modal"
-                            data-bs-target="#addModalOut"><i class="lni lni-plus"></i>Tambah Uang Keluar</button>
+                            data-bs-target="#addModalOut"><i class="lni lni-plus"></i>Transaksi Keluar</button>
 
                     </div>
                 </div>
+
                 @if ($errors->any())
                 <div>
                     <ul>
@@ -38,80 +39,53 @@
                 </div>
             </div>
             @endif
+            <div class="row my-3">
+                <form action="{{ route('transaction.index') }}" method="get" class="col-lg-4">
+                    @isset($account)
+                    <input type="hidden" name="account" value="{{ $account->code }}">
+                    @endisset
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-style-1">
+                                <label>Tanggal Awal</label>
+                                <input type="date" name="start_date" value="{{ $startDateFormatted }}"
+                                    class="form-control">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-style-1">
+                                <label>Tanggal Akhir</label>
+                                <input type="date" name="end_date" value="{{ $endDateFormatted }}" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <button type="submit" class="main-btn primary-btn btn-hover">
+                                Filter</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
             <div class="table-wrapper table-responsive">
-                <table class="table striped-table">
+                <table id="ledgerTable" class="table striped-table">
                     <thead>
                         <tr>
-                            <th>
-                                <h6>Waktu</h6>
-                            </th>
-                            <th>
-                                <h6>Uraian</h6>
-                            </th>
-                            <th>
-                                <h6>Jenis Transaksi</h6>
-                            </th>
-                            <th>
-                                <h6>Masuk</h6>
-                            </th>
-                            <th>
-                                <h6>Keluar</h6>
-                            </th>
-                            <th>
-                                <h6>Aksi</h6>
-                            </th>
+                            <th>Waktu</th>
+                            <th>Uraian</th>
+                            <th>Jenis Transaksi</th>
+                            <th>Masuk</th>
+                            <th>Keluar</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($transactions as $transaction)
-                        <tr>
-                            <td>
-                                <p>{{$transaction->transaction_at}}</p>
-                            </td>
-                            <td>
-                                <p>{{$transaction->description}}</p>
-                            </td>
-                            <td>
-                                <p>{{$transaction->category->name}}</p>
-                            </td>
-                            <td>
-                                @if(isset($account))
-                                <p>{{$transaction->category->debetAccount->code == $account->code ?
-                                    number_format($transaction->nominal, 0,',', '.') : '-'}}
-                                </p>
-                                @else
-                                <p>{{$transaction->category->type === 'in' ? number_format($transaction->nominal, 0,',',
-                                    '.') : '-' }}</p>
-                                @endif
-                            </td>
-                            <td>
-                                @if(isset($account))
-                                <p>{{$transaction->category->creditAccount->code == $account->code ?
-                                    number_format($transaction->nominal, 0,',', '.') : '-'}}
-                                </p>
-                                @else
-                                <p>{{$transaction->category->type === 'out' ? number_format($transaction->nominal, 0,
-                                    ',', '.') : '-' }}</p>
-                                @endif
-                            </td>
-                            <td>
-                                <div class="action">
-                                    <button class="text-danger">
-                                        <i class="lni lni-trash-can"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                        <tr>
-                            <td colspan="4" class="text-end">Total Saldo: </td>
-                            <td colspan="2" class="text-center">
-                                <p class="fw-bold fs-5">Rp. {{ number_format($totalBalance, 0, '.', '.') }}</p>
-                            </td>
-                        </tr>
                     </tbody>
                 </table>
-                <!-- end table -->
+            </div>
+
+            <div class="mt-3 fs-4 fw-bold d-flex text-danger">
+                Saldo: {{number_format($totalBalance, 0, ',', '.')}}
             </div>
         </div>
     </div>
@@ -285,7 +259,29 @@
     </div>
     <x-slot name="scripts">
         <script>
-
+            $(document).ready(function() {
+                $('#ledgerTable').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: {
+                        url: "{{ route('transaction.index') }}",
+                        data: function (d) {
+                            d.account = "{{ request('account') }}";
+                            d.start_date = $('input[name="start_date"]').val();
+                            d.end_date = $('input[name="end_date"]').val();
+                        }
+                    },
+                    columns: [
+                        { data: 'entry_date', name: 'entry_date' },
+                        { data: 'description', name: 'transaction.description' },
+                        { data: 'category_name', name: 'transaction.category.name' },
+                        { data: 'debit', name: 'debit' },
+                        { data: 'credit', name: 'credit' },
+                        { data: 'action', name: 'action', orderable: false, searchable: false }
+                    ],
+                    order: [[0, 'desc']]
+                });
+            });
         </script>
     </x-slot>
 </x-app-layout>

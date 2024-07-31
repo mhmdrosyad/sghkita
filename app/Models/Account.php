@@ -29,4 +29,9 @@ class Account extends Model
     {
         return $this->hasMany(MonthlyBalance::class, 'account_code', 'code');
     }
+
+    public function ledgerEntries()
+    {
+        return $this->hasMany(LedgerEntry::class, 'account_code', 'code');
+    }
 }

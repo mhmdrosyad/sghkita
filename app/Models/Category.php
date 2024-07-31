@@ -9,7 +9,7 @@ class Category extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['code', 'name', 'debet', 'credit', 'note', 'type'];
+    protected $fillable = ['code', 'name', 'debit_account_code', 'credit_account_code', 'note', 'type'];
 
     protected $primaryKey = 'code';
     public $incrementing = false;
@@ -22,11 +22,11 @@ class Category extends Model
 
     public function debetAccount()
     {
-        return $this->belongsTo(Account::class, 'debet', 'code');
+        return $this->belongsTo(Account::class, 'debit_account_code', 'code');
     }
 
     public function creditAccount()
     {
-        return $this->belongsTo(Account::class, 'credit', 'code');
+        return $this->belongsTo(Account::class, 'credit_account_code', 'code');
     }
 }

@@ -36,7 +36,7 @@
             </div>
             @endif
             <div class="table-wrapper table-responsive">
-                <table class="table striped-table">
+                <table id="category-table" class="table striped-table">
                     <thead>
                         <tr>
                             <th>
@@ -63,27 +63,25 @@
                         @foreach($categories as $category)
                         <tr>
                             <td>
-                                <p>{{ $category->code }}</p>
+                                {{ $category->code }}
                             </td>
                             <td>
-                                <p>{{ $category->name }}</p>
+                                {{ $category->name }}
                             </td>
                             <td>
-                                <p>
-                                    @if ($category->type === 'in')
-                                    Masuk
-                                    @elseif ($category->type === 'out')
-                                    Keluar
-                                    @elseif ($category->type === 'mutation')
-                                    Mutasi
-                                    @endif
-                                </p>
+                                @if ($category->type === 'in')
+                                Masuk
+                                @elseif ($category->type === 'out')
+                                Keluar
+                                @elseif ($category->type === 'mutation')
+                                Mutasi
+                                @endif
                             </td>
                             <td>
-                                <p>{{ $category->debetAccount->name }}</p>
+                                {{ $category->debetAccount->name }}
                             </td>
                             <td>
-                                <p>{{ $category->creditAccount->name }}</p>
+                                {{ $category->creditAccount->name }}
                             </td>
                             <td>
                                 <div class="action">
@@ -129,7 +127,9 @@
     </div>
     <x-slot name="scripts">
         <script>
-
+            $(document).ready(function() {
+                $('#category-table').DataTable();
+            });
         </script>
     </x-slot>
 </x-app-layout>

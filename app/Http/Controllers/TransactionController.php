@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Account;
 use App\Models\Category;
+use App\Models\LedgerEntry;
 use App\Models\MonthlyBalance;
 use Illuminate\Http\Request;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Yajra\DataTables\DataTables;
 
 class TransactionController extends Controller
 {
@@ -22,15 +24,55 @@ class TransactionController extends Controller
     public function index(Request $request)
     {
         $accountCode = $request->query('account');
+        $startDate = $request->query('start_date', today()->toDateString());
+        $endDate = $request->query('end_date', today()->toDateString());
+
+        $startDate = Carbon::parse($startDate)->startOfDay()->toDateTimeString();
+        $endDate = Carbon::parse($endDate)->endOfDay()->toDateTimeString();
+
+        if ($request->ajax()) {
+            $query = LedgerEntry::with(['transaction.category'])->whereBetween('entry_date', [$startDate, $endDate]);
+
+            if ($accountCode) {
+                $query->where('account_code', $accountCode);
+            } else {
+                $query->whereHas('account', function ($query) {
+                    $query->where('position', 'asset')->whereNotIn('code', ['101', '102']);
+                });
+            }
+
+            return DataTables::of($query)
+                ->addColumn('description', function ($entry) {
+                    return $entry->transaction->description ?? 'N/A';
+                })
+                ->addColumn('category_name', function ($entry) {
+                    return $entry->transaction->category->name ?? 'N/A';
+                })
+                ->addColumn('debit', function ($entry) {
+                    return $entry->entry_type == 'debit' ? number_format($entry->amount, 0, ',', '.') : '0';
+                })
+                ->addColumn('credit', function ($entry) {
+                    return $entry->entry_type == 'credit' ? number_format($entry->amount, 0, ',', '.') : '0';
+                })
+                ->addColumn('action', function ($entry) {
+                    return '<div class="action">
+                                        <button class="text-danger">
+                                            <i class="lni lni-trash-can"></i>
+                                        </button>
+                                    </div>';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+
         $account = Account::find($accountCode);
         $inCategories = null;
         $outCategories = null;
+
+        $query = LedgerEntry::whereBetween('entry_date', [$startDate, $endDate]);
         if ($account) {
-            $transactions = Transaction::whereHas('category.debetAccount', function ($query) use ($accountCode) {
-                $query->where('code', $accountCode);
-            })->orWhereHas('category.creditAccount', function ($query) use ($accountCode) {
-                $query->where('code', $accountCode);
-            })->get();
+            $ledgerEntries = $query->where('account_code', $accountCode)->get();
 
             $inCategories = Category::where(function ($query) use ($accountCode) {
                 $query->whereHas('debetAccount', function ($subQuery) use ($accountCode) {
@@ -43,23 +85,13 @@ class TransactionController extends Controller
                 });
             })->get();
 
-            $totalDebet = 0;
-            $totalCredit = 0;
-
-            foreach ($transactions as $transaction) {
-                if ($transaction->category->debetAccount->code == $accountCode) {
-                    $totalDebet += $transaction->nominal;
-                } elseif ($transaction->category->creditAccount->code == $accountCode) {
-                    $totalCredit += $transaction->nominal;
-                }
-            }
+            $totalDebet = $ledgerEntries->where('entry_type', 'debit')->sum('amount');
+            $totalCredit = $ledgerEntries->where('entry_type', 'credit')->sum('amount');
 
             $totalBalance = $account->current_balance;
         } else {
-            $transactions = Transaction::whereHas('category.debetAccount', function ($query) {
-                $query->whereNotIn('code', ['101', '102']);
-            })->orWhereHas('category.creditAccount', function ($query) {
-                $query->whereNotIn('code', ['101', '102']);
+            $ledgerEntries = $query->whereHas('account', function ($query) {
+                $query->where('position', 'asset')->whereNotIn('code', ['101', '102']);
             })->get();
 
             $inCategories = Category::where(function ($query) {
@@ -74,20 +106,14 @@ class TransactionController extends Controller
                 });
             })->get();
 
-            $totalDebet = 0;
-            $totalCredit = 0;
-
-            foreach ($transactions as $transaction) {
-                if ($transaction->category->debetAccount->code == $accountCode) {
-                    $totalDebet += $transaction->nominal;
-                } elseif ($transaction->category->creditAccount->code == $accountCode) {
-                    $totalCredit += $transaction->nominal;
-                }
-            }
+            $totalDebet = $ledgerEntries->where('entry_type', 'debit')->sum('amount');
+            $totalCredit = $ledgerEntries->where('entry_type', 'credit')->sum('amount');
             $totalBalance = $totalDebet - $totalCredit;
         }
         $mutationCategories = Category::where('type', 'mutation')->get();
-        return view('transaction.index', compact('account', 'mutationCategories', 'inCategories', 'outCategories', 'transactions', 'totalBalance'));
+        $startDateFormatted = Carbon::parse($startDate)->format('Y-m-d');
+        $endDateFormatted = Carbon::parse($endDate)->format('Y-m-d');
+        return view('transaction.index', compact('account', 'mutationCategories', 'inCategories', 'outCategories', 'totalBalance', 'startDateFormatted', 'endDateFormatted'));
     }
 
     public function store(Request $request)
@@ -107,7 +133,7 @@ class TransactionController extends Controller
         $debetAccount = $category->debetAccount;
         $creditAccount = $category->creditAccount;
 
-        $this->transactionModel->create([
+        $transaction = $this->transactionModel->create([
             'transaction_at' => now(),
             'description' => $request->description,
             'category_code' => $request->category_code,
@@ -118,31 +144,49 @@ class TransactionController extends Controller
         $currentMonth = Carbon::now()->format('m-Y');
 
         if ($debetAccount) {
-            if ($debetAccount->position == 'activa') {
+            if ($debetAccount->position == 'asset') {
                 $debetAccount->current_balance += $request->nominal;
                 $this->updateMonthlyBalance($debetAccount, $currentMonth, $request->nominal);
-            } elseif ($debetAccount->position == 'passiva') {
+            } elseif ($debetAccount->position == 'liability') {
                 $debetAccount->current_balance -= $request->nominal;
                 $this->updateMonthlyBalance($debetAccount, $currentMonth, -$request->nominal);
             } else {
                 $debetAccount->current_balance += $request->nominal;
                 $this->updateMonthlyBalance($debetAccount, $currentMonth, $request->nominal);
+                $this->updateRevenueAccount($request->nominal, $debetAccount->position, $currentMonth);
             }
             $debetAccount->save();
+
+            LedgerEntry::create([
+                'transaction_id' => $transaction->id,
+                'account_code' => $debetAccount->code,
+                'entry_date' => $transaction->transaction_at,
+                'entry_type' => 'debit',
+                'amount' => $request->nominal,
+            ]);
         }
 
         if ($creditAccount) {
-            if ($creditAccount->position == 'activa') {
+            if ($creditAccount->position == 'asset') {
                 $creditAccount->current_balance -= $request->nominal;
                 $this->updateMonthlyBalance($creditAccount, $currentMonth, -$request->nominal);
-            } elseif ($creditAccount->position == 'passiva') {
+            } elseif ($creditAccount->position == 'liability') {
                 $creditAccount->current_balance += $request->nominal;
                 $this->updateMonthlyBalance($creditAccount, $currentMonth, $request->nominal);
             } else {
                 $creditAccount->current_balance += $request->nominal;
                 $this->updateMonthlyBalance($creditAccount, $currentMonth, $request->nominal);
+                $this->updateRevenueAccount($request->nominal, $creditAccount->position, $currentMonth);
             }
             $creditAccount->save();
+
+            LedgerEntry::create([
+                'transaction_id' => $transaction->id,
+                'account_code' => $creditAccount->code,
+                'entry_date' => $transaction->transaction_at,
+                'entry_type' => 'credit',
+                'amount' => $request->nominal,
+            ]);
         }
 
         $account_code = $request->account_code;
@@ -178,5 +222,23 @@ class TransactionController extends Controller
             $monthlyBalance->balance = $initialBalance + $nominal;
         }
         $monthlyBalance->save();
+    }
+
+    private function updateRevenueAccount($amount, $type, $currentMonth)
+    {
+        $revenueAccount = Account::where('code', '305')->first();
+
+        if (!$revenueAccount) {
+            return;
+        }
+
+        if ($type == 'revenue') {
+            $revenueAccount->current_balance += $amount;
+        } elseif ($type == 'expense') {
+            $revenueAccount->current_balance -= $amount;
+        }
+
+        $revenueAccount->save();
+        $this->updateMonthlyBalance($revenueAccount, $currentMonth, $amount * ($type == 'expense' ? -1 : 1));
     }
 }

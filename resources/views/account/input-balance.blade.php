@@ -40,7 +40,7 @@
                         <div class="col">
                             <h4 class="mb-3">Aktiva</h4>
                             @foreach($accounts as $account)
-                            @if($account->position == 'activa')
+                            @if($account->position == 'asset')
                             <div class="input-style-1">
                                 <label>{{$account->name}}</label>
                                 <input name="account[{{$account->code}}]" type="text" placeholder="masukan saldo awal"
@@ -52,7 +52,7 @@
                         <div class="col">
                             <h4 class="mb-3">Passiva</h4>
                             @foreach($accounts as $account)
-                            @if($account->position == 'passiva')
+                            @if($account->position == 'liability')
                             <div class="input-style-1">
                                 <label>{{$account->name}}</label>
                                 <input name="account[{{$account->code}}]" type="text" placeholder="masukan saldo awal"

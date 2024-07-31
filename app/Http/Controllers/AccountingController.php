@@ -30,13 +30,13 @@ class AccountingController extends Controller
             $balance = $monthlyBalances->get($account->code);
             $accountBalance = $balance ? $balance->balance : 0;
 
-            if ($account->position == 'activa') {
+            if ($account->position == 'asset') {
                 $activaAccounts[] = [
                     'account' => $account,
                     'balance' => $accountBalance
                 ];
                 $totalActiva += $accountBalance;
-            } elseif ($account->position == 'passiva') {
+            } elseif ($account->position == 'liability') {
                 $passivaAccounts[] = [
                     'account' => $account,
                     'balance' => $accountBalance
@@ -68,13 +68,13 @@ class AccountingController extends Controller
             $balance = $monthlyBalances->get($account->code);
             $accountBalance = $balance ? $balance->balance : 0;
 
-            if ($account->position == 'income') {
+            if ($account->position == 'revenue') {
                 $incomeAccounts[] = [
                     'account' => $account,
                     'balance' => $accountBalance
                 ];
                 $totalIncome += $accountBalance;
-            } elseif ($account->position == 'outcome') {
+            } elseif ($account->position == 'expense') {
                 $outcomeAccounts[] = [
                     'account' => $account,
                     'balance' => $accountBalance
