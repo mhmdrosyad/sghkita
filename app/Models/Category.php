@@ -20,7 +20,7 @@ class Category extends Model
         return $this->hasMany(Transaction::class, 'category_code', 'code');
     }
 
-    public function debetAccount()
+    public function debitAccount()
     {
         return $this->belongsTo(Account::class, 'debit_account_code', 'code');
     }

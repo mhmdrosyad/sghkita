@@ -94,9 +94,18 @@
                                 </td>
                                 <td>
                                     <div class="action">
-                                        <button class="text-danger">
+                                        <a href="{{ route('account.edit', $account->code) }}" class="text-primary">
+                                            <i class="lni lni-pencil"></i>
+                                        </a>
+                                        <button class="text-danger" onclick="confirmDelete('{{ $account->code }}')">
                                             <i class="lni lni-trash-can"></i>
                                         </button>
+                                        <form id="delete-form-{{ $account->code }}"
+                                            action="{{ route('account.destroy', $account->code) }}" method="POST"
+                                            style="display: none;">
+                                            @csrf
+                                            @method('DELETE')
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
@@ -189,6 +198,21 @@
 
     <x-slot name="scripts">
         <script>
+            function confirmDelete(code) {
+                Swal.fire({
+                    title: 'Apakah anda yakin?',
+                    text: "Transaksi yang berkaitan degan akun ini akan di hapus!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, tetap hapus!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('delete-form-' + code).submit();
+                    }
+                })
+            }
             $(document).ready(function() {
                 $('#account-table').DataTable();
             });

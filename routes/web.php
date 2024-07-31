@@ -27,17 +27,22 @@ Route::middleware('auth')->group(function () {
     Route::prefix('account')->group(function () {
         Route::get('/', [AccountController::class, 'index'])->name('account.index');
         Route::post('/', [AccountController::class, 'store'])->name('account.store');
+        Route::get('edit/{code}', [AccountController::class, 'edit'])->name('account.edit');
+        Route::put('update/{code}', [AccountController::class, 'update'])->name('account.update');
+        Route::delete('delete/{code}', [AccountController::class, 'destroy'])->name('account.destroy');
         Route::post('{accountCode}/add-initial-balance', [AccountController::class, 'addInitialBalance']);
         Route::post('import', [AccountController::class, 'import'])->name('account.import');
         Route::get('input-balance', [AccountController::class, 'inputBalance'])->name('account.inputBalance');
         Route::post('initial-balance', [AccountController::class, 'storeInitialBalance'])->name('account.store.initialBalance');
-
     });
 
     Route::prefix('category')->group(function () {
         Route::get('/', [CategoryController::class, 'index'])->name('category.index');
         Route::get('add', [CategoryController::class, 'add'])->name('category.add');
         Route::post('store', [CategoryController::class, 'store'])->name('category.store');
+        Route::get('edit/{code}', [CategoryController::class, 'edit'])->name('category.edit');
+        Route::put('update/{code}', [CategoryController::class, 'update'])->name('category.update');
+        Route::delete('delete/{code}', [CategoryController::class, 'destroy'])->name('category.destroy');
         Route::post('import', [CategoryController::class, 'import'])->name('category.import');
     });
 
