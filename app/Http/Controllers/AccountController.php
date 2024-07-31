@@ -29,7 +29,7 @@ class AccountController extends Controller
         $request->validate([
             'code' => 'required|string|unique:accounts,code',
             'name' => 'required|string|max:255',
-            'position' => 'required|in:activa,passiva,income,outcome',
+            'position' => 'required|in:asset,liability,revenue,expense',
         ]);
 
         $this->accountModel->create([
@@ -39,6 +39,26 @@ class AccountController extends Controller
         ]);
 
         return redirect()->route('account.index')->with('success', 'Account created successfully.');
+    }
+
+    public function edit($code)
+    {
+        $account = Account::where('code', $code)->firstOrFail();
+        return view('account.edit', compact('account'));
+    }
+
+    public function update(Request $request, $code)
+    {
+        $account = Account::where('code', $code)->firstOrFail();
+        $account->update($request->all());
+        return redirect()->route('account.index')->with('success', 'Account updated successfully');
+    }
+
+    public function destroy($code)
+    {
+        $account = Account::where('code', $code)->firstOrFail();
+        $account->delete();
+        return redirect()->route('account.index')->with('success', 'Account deleted successfully');
     }
 
     public function addInitialBalance(Request $request, $accountCode)

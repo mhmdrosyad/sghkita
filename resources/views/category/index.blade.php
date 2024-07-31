@@ -27,49 +27,48 @@
                 </div>
                 @endif
                 @if (session('success'))
-                <div class="alert-box success-alert alert-dismissible fade show" role="alert"">
+                <div class="alert-box success-alert" role="alert">
                     <div class=" alert">
-                    <p class="text-medium">
-                        {{ session('success') }}
-                    </p>
+                        <p class="text-medium">
+                            {{ session('success') }}
+                        </p>
+                    </div>
                 </div>
-            </div>
-            @endif
-            <div class="table-wrapper table-responsive">
-                <table class="table striped-table">
-                    <thead>
-                        <tr>
-                            <th>
-                                <h6>Kode</h6>
-                            </th>
-                            <th>
-                                <h6>Nama</h6>
-                            </th>
-                            <th>
-                                <h6>Jenis</h6>
-                            </th>
-                            <th>
-                                <h6>Debit</h6>
-                            </th>
-                            <th>
-                                <h6>Kredit</h6>
-                            </th>
-                            <th>
-                                <h6>Aksi</h6>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($categories as $category)
-                        <tr>
-                            <td>
-                                <p>{{ $category->code }}</p>
-                            </td>
-                            <td>
-                                <p>{{ $category->name }}</p>
-                            </td>
-                            <td>
-                                <p>
+                @endif
+                <div class="table-wrapper table-responsive">
+                    <table id="category-table" class="table striped-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <h6>Kode</h6>
+                                </th>
+                                <th>
+                                    <h6>Nama</h6>
+                                </th>
+                                <th>
+                                    <h6>Jenis</h6>
+                                </th>
+                                <th>
+                                    <h6>Debit</h6>
+                                </th>
+                                <th>
+                                    <h6>Kredit</h6>
+                                </th>
+                                <th>
+                                    <h6>Aksi</h6>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($categories as $category)
+                            <tr>
+                                <td>
+                                    {{ $category->code }}
+                                </td>
+                                <td>
+                                    {{ $category->name }}
+                                </td>
+                                <td>
                                     @if ($category->type === 'in')
                                     Masuk
                                     @elseif ($category->type === 'out')
@@ -77,29 +76,37 @@
                                     @elseif ($category->type === 'mutation')
                                     Mutasi
                                     @endif
-                                </p>
-                            </td>
-                            <td>
-                                <p>{{ $category->debetAccount->name }}</p>
-                            </td>
-                            <td>
-                                <p>{{ $category->creditAccount->name }}</p>
-                            </td>
-                            <td>
-                                <div class="action">
-                                    <button class="text-danger">
-                                        <i class="lni lni-trash-can"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                <!-- end table -->
+                                </td>
+                                <td>
+                                    {{ $category->debitAccount?->name }}
+                                </td>
+                                <td>
+                                    {{ $category->creditAccount?->name }}
+                                </td>
+                                <td>
+                                    <div class="action">
+                                        <a href="{{ route('category.edit', $category->code) }}" class="text-primary">
+                                            <i class="lni lni-pencil"></i>
+                                        </a>
+                                        <button class="text-danger" onclick="confirmDelete('{{ $category->code }}')">
+                                            <i class="lni lni-trash-can"></i>
+                                        </button>
+                                        <form id="delete-form-{{ $category->code }}"
+                                            action="{{ route('category.destroy', $category->code) }}" method="POST"
+                                            style="display: none;">
+                                            @csrf
+                                            @method('DELETE')
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                    <!-- end table -->
+                </div>
             </div>
         </div>
-    </div>
     </div>
 
     <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
@@ -129,7 +136,24 @@
     </div>
     <x-slot name="scripts">
         <script>
-
+            function confirmDelete(code) {
+                Swal.fire({
+                    title: 'Apakah anda yakin?',
+                    text: "Transaksi yang berkaitan degan akun ini akan di hapus!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, tetap hapus!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('delete-form-' + code).submit();
+                    }
+                })
+            }
+            $(document).ready(function() {
+                $('#category-table').DataTable();
+            });
         </script>
     </x-slot>
 </x-app-layout>

@@ -36,7 +36,7 @@
                     </div>
                 </div>
                 <div class="table-wrapper table-responsive">
-                    <table class="table striped-table">
+                    <table id="activa-table" class="table striped-table">
                         <thead>
                             <tr>
                                 <th>
@@ -58,13 +58,21 @@
                                 <td>{{ number_format($item['balance'], 0, ',', '.') }}</td>
                             </tr>
                             @endforeach
-                            <tr>
-                                <td colspan="2"><strong>Total Activa</strong></td>
-                                <td><strong>{{ number_format($totalActiva, 0, ',', '.') }}</strong></td>
-                            </tr>
                         </tbody>
                     </table>
                     <!-- end table -->
+
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-3">
+                        <strong>Total Aktiva</strong>
+                    </div>
+                    <div class="col-md-1">
+                        <strong>:</strong>
+                    </div>
+                    <div class="col">
+                        <strong>{{ number_format($totalActiva, 0, ',', '.') }}</strong>
+                    </div>
                 </div>
             </div>
         </div>
@@ -80,7 +88,7 @@
                     </div>
                 </div>
                 <div class="table-wrapper table-responsive">
-                    <table class="table striped-table">
+                    <table id="passiva-table" class="table striped-table">
                         <thead>
                             <tr>
                                 <th>
@@ -102,13 +110,20 @@
                                 <td>{{ number_format($item['balance'], 0, ',', '.') }}</td>
                             </tr>
                             @endforeach
-                            <tr>
-                                <td colspan="2"><strong>Total Passiva</strong></td>
-                                <td><strong>{{ number_format($totalPassiva, 0, ',', '.') }}</strong></td>
-                            </tr>
                         </tbody>
                     </table>
                     <!-- end table -->
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-3">
+                        <strong>Total Passiva</strong>
+                    </div>
+                    <div class="col-md-1">
+                        <strong>:</strong>
+                    </div>
+                    <div class="col">
+                        <strong>{{ number_format($totalPassiva, 0, ',', '.') }}</strong>
+                    </div>
                 </div>
             </div>
         </div>
@@ -116,7 +131,9 @@
 
     <x-slot name="scripts">
         <script>
-
+            $(document).ready(function() {
+                $('#activa-table, #passiva-table').DataTable();
+            });
         </script>
     </x-slot>
 </x-app-layout>

@@ -14,6 +14,9 @@
     <link rel="stylesheet" href="{{asset('css/fullcalendar.css')}}" />
     <link rel="stylesheet" href="{{asset('css/fullcalendar.css')}}" />
     <link rel="stylesheet" href="{{asset('css/main.css')}}" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.2/css/dataTables.bootstrap5.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 </head>
 
@@ -46,9 +49,12 @@
     <script src="{{asset('js/world-merc.js')}}"></script>
     <script src="{{asset('js/polyfill.js')}}"></script>
     <script src="{{asset('js/main.js')}}"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.datatables.net/2.1.2/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.1.2/js/dataTables.bootstrap5.js"></script>
 
-    @isset($script)
-    {{ $script }}
+    @isset($scripts)
+    {{ $scripts }}
     @endisset
 </body>
 

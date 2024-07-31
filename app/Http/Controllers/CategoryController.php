@@ -20,7 +20,7 @@ class CategoryController extends Controller
 
     public function index()
     {
-        $categories = $this->categoryModel->with(['debetAccount', 'creditAccount'])->get();
+        $categories = $this->categoryModel->with(['debitAccount', 'creditAccount'])->get();
         return view('category.index', compact('categories'));
     }
 
@@ -44,12 +44,33 @@ class CategoryController extends Controller
             'code' => $request->code,
             'name' => $request->name,
             'type' => $request->type,
-            'debet' => $request->debet,
-            'credit' => $request->credit,
+            'debit_account_code' => $request->debet,
+            'credit_account_code' => $request->credit,
             'note' => $request->note,
         ]);
 
         return redirect()->route('category.index')->with('success', 'Category created successfully.');
+    }
+
+    public function edit($code)
+    {
+        $category = Category::where('code', $code)->firstOrFail();
+        $accounts = Account::all();
+        return view('category.edit', compact('accounts', 'category'));
+    }
+
+    public function update(Request $request, $code)
+    {
+        $category = Category::where('code', $code)->firstOrFail();
+        $category->update($request->all());
+        return redirect()->route('category.index')->with('success', 'Account updated successfully');
+    }
+
+    public function destroy($code)
+    {
+        $category = Category::where('code', $code)->firstOrFail();
+        $category->delete();
+        return redirect()->route('category.index')->with('success', 'Account deleted successfully');
     }
 
     public function import(Request $request)

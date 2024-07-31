@@ -39,14 +39,14 @@
                 <div class="title d-flex flex-wrap align-items-center justify-content-between mb-3">
                     <div class="left">
                         <h2>
-                            Laba Rugi (Pendapatan)
+                            Pendapatan
                         </h2>
                     </div>
                     <div class="right">
                     </div>
                 </div>
                 <div class="table-wrapper table-responsive">
-                    <table class="table striped-table">
+                    <table id="profit-table" class="table striped-table">
                         <thead>
                             <tr>
                                 <th>
@@ -68,13 +68,20 @@
                                 <td>{{ number_format($item['balance'], 0, ',', '.') }}</td>
                             </tr>
                             @endforeach
-                            <tr>
-                                <td colspan="2"><strong>Total</strong></td>
-                                <td><strong>{{ number_format($totalIncome, 0, ',', '.') }}</strong></td>
-                            </tr>
                         </tbody>
                     </table>
                     <!-- end table -->
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-3">
+                        <strong>Total</strong>
+                    </div>
+                    <div class="col-md-1">
+                        <strong>:</strong>
+                    </div>
+                    <div class="col">
+                        <strong>{{ number_format($totalIncome, 0, ',', '.') }}</strong>
+                    </div>
                 </div>
             </div>
         </div>
@@ -83,14 +90,14 @@
                 <div class="title d-flex flex-wrap align-items-center justify-content-between mb-3">
                     <div class="left">
                         <h2>
-                            Laba Rugi (Biaya)
+                            Beban / Biaya
                         </h2>
                     </div>
                     <div class="right">
                     </div>
                 </div>
                 <div class="table-wrapper table-responsive">
-                    <table class="table striped-table">
+                    <table id="loss-table" class="table striped-table">
                         <thead>
                             <tr>
                                 <th>
@@ -112,13 +119,21 @@
                                 <td>{{ number_format($item['balance'], 0, ',', '.') }}</td>
                             </tr>
                             @endforeach
-                            <tr>
-                                <td colspan="2"><strong>Total</strong></td>
-                                <td><strong>{{ number_format($totalOutcome, 0, ',', '.') }}</strong></td>
-                            </tr>
+
                         </tbody>
                     </table>
                     <!-- end table -->
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-3">
+                        <strong>Total</strong>
+                    </div>
+                    <div class="col-md-1">
+                        <strong>:</strong>
+                    </div>
+                    <div class="col">
+                        <strong>{{ number_format($totalOutcome, 0, ',', '.') }}</strong>
+                    </div>
                 </div>
             </div>
         </div>
@@ -127,7 +142,9 @@
 
     <x-slot name="scripts">
         <script>
-
+            $(document).ready(function() {
+                    $('#profit-table, #loss-table').DataTable();
+                });
         </script>
     </x-slot>
 </x-app-layout>

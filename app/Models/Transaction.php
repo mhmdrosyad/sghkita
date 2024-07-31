@@ -36,4 +36,9 @@ class Transaction extends Model
     {
         return $this->hasMany(Payment::class);
     }
+
+    public function ledgerEntries()
+    {
+        return $this->hasMany(LedgerEntry::class);
+    }
 }
