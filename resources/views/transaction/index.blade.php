@@ -260,7 +260,7 @@
     <x-slot name="scripts">
         <script>
             $(document).ready(function() {
-                $('#ledgerTable').DataTable({
+                var table = $('#ledgerTable').DataTable({
                     processing: true,
                     serverSide: true,
                     ajax: {
@@ -280,6 +280,54 @@
                         { data: 'action', name: 'action', orderable: false, searchable: false }
                     ],
                     order: [[0, 'desc']]
+                });
+
+                $('#ledgerTable').on('click', '.delete-button', function() {
+                    var id = $(this).data('id');
+                    var url = '/transaction/delete/' + id;
+                    
+                    Swal.fire({
+                        title: 'Apakah anda yakin?',
+                        text: "Kamu tidak bisa mengembalikan data yang hilang!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Ya, tetap hapus!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: url,
+                                type: 'DELETE',
+                                data: {
+                                    _token: '{{ csrf_token() }}'
+                                },
+                                success: function(response) {
+                                    if (response.success) {
+                                        Swal.fire(
+                                            'Deleted!',
+                                            response.success,
+                                            'success'
+                                        )
+                                        table.ajax.reload();
+                                    } else {
+                                        Swal.fire(
+                                            'Error!',
+                                            response.error,
+                                            'error'
+                                        )
+                                    }
+                                },
+                                error: function(xhr) {
+                                    Swal.fire(
+                                        'Error!',
+                                        'An error occurred while deleting the account.',
+                                        'error'
+                                    )
+                                }
+                            });
+                        }
+                    });
                 });
             });
         </script>

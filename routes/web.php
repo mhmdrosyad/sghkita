@@ -49,6 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('transaction')->group(function () {
         Route::get('/', [TransactionController::class, 'index'])->name('transaction.index');
         Route::post('store', [TransactionController::class, 'store'])->name('transaction.store');
+        Route::delete('delete/{id}', [TransactionController::class, 'destroy'])->name('transaction.destroy');
     });
 
     Route::prefix('accounting')->group(function () {

@@ -56,10 +56,10 @@ class TransactionController extends Controller
                 })
                 ->addColumn('action', function ($entry) {
                     return '<div class="action">
-                                        <button class="text-danger">
-                                            <i class="lni lni-trash-can"></i>
-                                        </button>
-                                    </div>';
+                                <button class="text-danger delete-button" data-id="' . $entry->transaction->id . '">
+                                    <i class="lni lni-trash-can"></i>
+                                </button>
+                            </div>';
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -75,7 +75,7 @@ class TransactionController extends Controller
             $ledgerEntries = $query->where('account_code', $accountCode)->get();
 
             $inCategories = Category::where(function ($query) use ($accountCode) {
-                $query->whereHas('debetAccount', function ($subQuery) use ($accountCode) {
+                $query->whereHas('debitAccount', function ($subQuery) use ($accountCode) {
                     $subQuery->where('code', $accountCode);
                 });
             })->get();
@@ -95,7 +95,7 @@ class TransactionController extends Controller
             })->get();
 
             $inCategories = Category::where(function ($query) {
-                $query->whereHas('debetAccount', function ($subQuery) {
+                $query->whereHas('debitAccount', function ($subQuery) {
                     $subQuery->whereNotIn('code', ['101', '102']);
                 });
             })->get();
@@ -130,7 +130,7 @@ class TransactionController extends Controller
             return redirect()->back()->withErrors(['category_code' => 'Invalid category code.']);
         }
 
-        $debetAccount = $category->debetAccount;
+        $debetAccount = $category->debitAccount;
         $creditAccount = $category->creditAccount;
 
         $transaction = $this->transactionModel->create([
@@ -195,6 +195,16 @@ class TransactionController extends Controller
         } else {
             return redirect()->route('transaction.index')->with('success', 'Transaction added successfully.');
         }
+    }
+
+    public function destroy($id)
+    {
+        $transaction = Transaction::find($id);
+        if ($transaction) {
+            $transaction->delete();
+            return response()->json(['success' => 'Transaction deleted successfully']);
+        }
+        return response()->json(['error' => 'Transaction not found'], 404);
     }
 
     private function updateMonthlyBalance(Account $account, $currentMonth, $nominal)
