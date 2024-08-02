@@ -19,6 +19,8 @@ class AccountsImport implements ToModel, WithHeadingRow
             'code' => $row['code'],
             'name' => $row['name'],
             'position' => $position,
+            'initial_balance' => $row['initial_balance'],
+            'current_balance' => $row['initial_balance'],
         ]);
     }
 }

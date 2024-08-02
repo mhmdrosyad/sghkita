@@ -13,6 +13,8 @@
                     <div class="right">
                         {{-- <button type="button" class="main-btn secondary-btn btn-hover" data-bs-toggle="modal"
                             data-bs-target="#mutationModal"><i class="lni lni-plus"></i>Mutasi</button> --}}
+                        <button type="button" class="main-btn success-btn btn-hover" data-bs-toggle="modal"
+                            data-bs-target="#importModal"><i class="lni lni-upload"></i>Import</button>
                         <button type="button" class="main-btn primary-btn btn-hover" data-bs-toggle="modal"
                             data-bs-target="#addModal"><i class="lni lni-plus"></i>Transaksi Masuk</button>
                         <button type="button" class="main-btn warning-btn btn-hover" data-bs-toggle="modal"
@@ -251,6 +253,31 @@
                             <button type="reset" class="main-btn warning-btn btn-hover"><i
                                     class="lni lni-trash-can"></i></button>
                             <button type="submit" class="main-btn primary-btn btn-hover flex-fill">Tambah</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6>Import Cash Flow</h6>
+                    <button type="button" class="btn d-flex align-items-center fs-4 text-danger" data-bs-dismiss="modal"
+                        aria-label="Close"><i class="lni lni-cross-circle"></i></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('transaction.import') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="input-style-1">
+                            <label>Upload File Ecel:</label>
+                            <input name="file" type="file" required />
+                        </div>
+                        <div class="col-12 d-flex gap-3">
+                            <button type="reset" class="main-btn warning-btn btn-hover"><i
+                                    class="lni lni-trash-can"></i></button>
+                            <button type="submit" class="main-btn primary-btn btn-hover flex-fill">Upload</button>
                         </div>
                     </form>
                 </div>

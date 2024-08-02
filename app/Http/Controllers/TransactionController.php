@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\TransactionsImport;
 use App\Models\Account;
 use App\Models\Category;
 use App\Models\LedgerEntry;
@@ -10,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
 
 class TransactionController extends Controller
@@ -40,6 +42,7 @@ class TransactionController extends Controller
                     $query->where('position', 'asset')->whereNotIn('code', ['101', '102']);
                 });
             }
+
 
             return DataTables::of($query)
                 ->addColumn('description', function ($entry) {
@@ -205,6 +208,20 @@ class TransactionController extends Controller
             return response()->json(['success' => 'Transaction deleted successfully']);
         }
         return response()->json(['error' => 'Transaction not found'], 404);
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls',
+        ]);
+
+        try {
+            Excel::import(new TransactionsImport, $request->file('file'));
+            return redirect()->back()->with('success', 'Accounts imported successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'There was an error importing the accounts: ' . $e->getMessage());
+        }
     }
 
     private function updateMonthlyBalance(Account $account, $currentMonth, $nominal)
