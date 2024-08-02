@@ -50,6 +50,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [TransactionController::class, 'index'])->name('transaction.index');
         Route::post('store', [TransactionController::class, 'store'])->name('transaction.store');
         Route::delete('delete/{id}', [TransactionController::class, 'destroy'])->name('transaction.destroy');
+        Route::post('import', [TransactionController::class, 'import'])->name('transaction.import');
     });
 
     Route::prefix('accounting')->group(function () {
