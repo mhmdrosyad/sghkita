@@ -7,8 +7,11 @@ use App\Models\Reservation;
 use App\Models\Transaction;
 use App\Models\LedgerEntry;
 use App\Models\Category;
+use App\Models\Account;
+use App\Models\MonthlyBalance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class PaymentsController extends Controller
 {
@@ -21,15 +24,19 @@ class PaymentsController extends Controller
             'total' => 'required|numeric|min:0',
         ]);
 
-        // Verifikasi apakah category_code valid
+        // Verifikasi apakah type valid dan tentukan account_code
         $category = Category::where('code', $validated['type'])->first();
-
         if (!$category) {
-            return redirect()->back()->withErrors(['category_code' => 'Kode kategori tidak valid.']);
+            return redirect()->back()->withErrors(['type' => 'Kode kategori tidak valid.']);
         }
 
+        // Dapatkan akun terkait dengan kategori
         $debetAccount = $category->debitAccount;
         $creditAccount = $category->creditAccount;
+
+        if (!$debetAccount && !$creditAccount) {
+            return redirect()->back()->withErrors(['type' => 'Akun terkait tidak ditemukan.']);
+        }
 
         // Buat transaksi baru
         $transaction = Transaction::create([
@@ -43,39 +50,73 @@ class PaymentsController extends Controller
         // Buat entri pembayaran dengan ID transaksi yang baru dibuat
         $payment = Payment::create([
             'reservation_code' => $validated['reservation_code'],
-            'type' => $validated['type'] == '008' ? 'deposit' : 'pelunasan',
+            'type' => ($validated['type'] == '008' ? 'deposit' : 'pelunasan'),
             'transaction_id' => $transaction->id,
         ]);
 
-        // Buat entri buku besar
+        $totalAmount = $validated['total'];
+
+        // Update akun debit jika ada
         if ($debetAccount) {
-            LedgerEntry::create([
-                'transaction_id' => $transaction->id,
-                'account_code' => $debetAccount->code,
-                'entry_date' => $transaction->transaction_at,
-                'entry_type' => 'debit',
-                'amount' => $validated['total'],
-            ]);
+            $this->updateAccountBalance($debetAccount, $totalAmount, 'debit', $transaction);
         }
 
+        // Update akun kredit jika ada
         if ($creditAccount) {
-            LedgerEntry::create([
-                'transaction_id' => $transaction->id,
-                'account_code' => $creditAccount->code,
-                'entry_date' => $transaction->transaction_at,
-                'entry_type' => 'credit',
-                'amount' => $validated['total'],
-            ]);
+            $this->updateAccountBalance($creditAccount, $totalAmount, 'credit', $transaction);
         }
 
         // Perbarui status reservasi menjadi 'active' jika pembayaran berhasil
-        if ($payment) {
-            $reservation = Reservation::where('order_code', $validated['reservation_code'])->first();
-            if ($reservation && $reservation->status == 'waiting_list') {
-                $reservation->update(['status' => 'active']);
-            }
+        $reservation = Reservation::where('order_code', $validated['reservation_code'])->first();
+        if ($reservation && $reservation->status == 'waiting_list') {
+            $reservation->update(['status' => 'active']);
         }
 
         return redirect()->back()->with('success', 'Pembayaran berhasil dicatat.');
+    }
+
+    private function updateAccountBalance($account, $amount, $entryType, $transaction)
+    {
+        if ($entryType == 'debit') {
+            $account->current_balance += $amount;
+        } elseif ($entryType == 'credit') {
+            $account->current_balance += $amount;
+        }
+
+        $account->save();
+
+        // Buat entri ledger untuk akun yang diperbarui
+        LedgerEntry::create([
+            'transaction_id' => $transaction->id,
+            'account_code' => $account->code,
+            'entry_date' => $transaction->transaction_at->format('Y-m-d'),
+            'entry_type' => $entryType,
+            'amount' => $amount,
+        ]);
+
+        // Perbarui saldo bulanan untuk akun
+        $this->updateMonthlyBalance($account->code, $transaction->transaction_at, $amount, $entryType);
+    }
+
+    private function updateMonthlyBalance($accountCode, $transactionDate, $amount, $entryType)
+    {
+        $transactionDate = Carbon::parse($transactionDate);
+        $month = $transactionDate->format('m-Y');
+
+        $monthlyBalance = MonthlyBalance::firstOrNew([
+            'account_code' => $accountCode,
+            'month' => $month,
+        ]);
+
+        // Sesuaikan logika saldo untuk memastikan saldo tidak menjadi negatif
+        if ($entryType == 'debit') {
+            $monthlyBalance->balance += $amount;
+        } elseif ($entryType == 'credit') {
+            $monthlyBalance->balance += $amount;
+        }
+
+        $monthlyBalance->balance = max($monthlyBalance->balance, 0); // Pastikan saldo tidak negatif
+
+        $monthlyBalance->save();
     }
 }
