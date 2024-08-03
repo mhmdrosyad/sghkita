@@ -7,14 +7,12 @@
             </div>
             <div class="right">
                 <div class="dropdown">
-                    <button class="main-btn primary-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">
+                    <button class="main-btn primary-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Pilih Bulan
                     </button>
                     <ul class="dropdown-menu">
                         @foreach($periods as $period)
-                        <li><a class="dropdown-item"
-                                href="{{route('accounting.profitLoss', ['period' => $period->month])}}">{{\Carbon\Carbon::createFromFormat('m-Y',
+                        <li><a class="dropdown-item" href="{{route('accounting.profitLoss', ['period' => $period->month])}}">{{\Carbon\Carbon::createFromFormat('m-Y',
                                 $period->month)->translatedFormat('F Y')}}</a>
                         </li>
                         @endforeach
@@ -143,8 +141,8 @@
     <x-slot name="scripts">
         <script>
             $(document).ready(function() {
-                    $('#profit-table, #loss-table').DataTable();
-                });
+                $('#profit-table, #loss-table').DataTable();
+            });
         </script>
     </x-slot>
 </x-app-layout>
