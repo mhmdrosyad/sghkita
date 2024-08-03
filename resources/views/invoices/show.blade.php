@@ -144,8 +144,8 @@
                                     <div class="mb-3">
                                         <label for="type" class="form-label">Payment Type</label>
                                         <select class="form-control" id="type" name="type" required>
-                                            <option value="deposit">Deposit</option>
-                                            <option value="pelunasan">Pelunasan</option>
+                                            <option value="008">Deposit Tamu Grup</option>
+                                            <option value="064">Deposit Tamu via BCA</option>
                                         </select>
                                     </div>
 
