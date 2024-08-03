@@ -41,6 +41,7 @@
                                 <th>Nama</th>
                                 <th>Agency</th>
                                 <th>Jenis Reservasi</th>
+                                <th>Checkin</th>
                                 <th>Sales</th>
                                 <th class="text-center">Action</th>
                             </tr>
@@ -52,7 +53,6 @@
                                 <td>{{ $reservation->customer->name }}</td>
                                 <td>{{ $reservation->customer->agency }}</td>
                                 <td>{{ $reservation->resCategory->name }}</td>
-                                <td>{{ $reservation->pax }}</td>
                                 <td>{{ $reservation->checkin->format('d-m-Y') }}</td>
                                 <td>{{ optional($reservation->sales)->name }}</td>
                                 <td>
@@ -149,7 +149,7 @@
                                         </div>
 
                                         <div class="modal-footer">
-                                            <a href="#" class="btn btn-primary">
+                                            <a href="{{ route('invoices.show', $reservation->invoice->id) }}" class="btn btn-sm btn-warning">
                                                 <i class="ti ti-file-dollar me-1"></i> Invoice
                                             </a>
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
