@@ -159,8 +159,6 @@
                                 </div>
                             </div>
 
-
-
                             <!-- Edit Reservation Modal -->
                             <div class="modal fade" id="editReservationModal{{ $reservation->id }}" tabindex="-1" aria-labelledby="editReservationModalLabel{{ $reservation->id }}" aria-hidden="true">
                                 <div class="modal-dialog modal-lg">
@@ -521,7 +519,6 @@
             </div>
         </div>
     </div>
-
 
     <x-slot name="scripts">
         <script>

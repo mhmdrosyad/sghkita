@@ -20,8 +20,12 @@
                     <thead>
                         <tr>
                             <th>Kode Reservasi</th>
+                            <th>Instansi</th>
                             <th>Nama</th>
+                            <!-- <th>Pax</th> -->
+                            <!-- <th>Harga/pax</th> -->
                             <th>Total Tagihan</th>
+                            <th>Sales</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -29,8 +33,12 @@
                         @foreach($invoices as $invoice)
                         <tr>
                             <td>{{$invoice->reservation->order_code}}</td>
+                            <td>{{$invoice->reservation->customer->agency}}</td>
                             <td>{{$invoice->reservation->customer->name}}</td>
+                            <!-- <td>{{$invoice->reservation->pax}}</td> -->
+                            <!-- <td>{{$invoice->reservation->rate}}</td> -->
                             <td>Rp. {{number_format($invoice->total_bill, 0, ',', '.')}}</td>
+                            <td>{{$invoice->reservation->sales->name}}</td>
                             <td><a href="{{route('invoices.show', $invoice->id)}}" class="btn btn-sm btn-warning">Detail</a></td>
                         </tr>
                         @endforeach
