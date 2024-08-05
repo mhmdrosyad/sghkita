@@ -8,16 +8,21 @@
         @endif
 
         <div class="card">
-            <div class="card-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h3><strong>
-                            Invoice ID: {{ $invoice->reservation->order_code }}
-                        </strong></h3>
-                </div>
+            <div class="card-header text-center">
+                <h3>
+                    Invoice Code : <strong class="text-primary">{{ $invoice->reservation->order_code }}</strong> |
+                    {{ $invoice->reservation->customer->agency }}
+                </h3>
             </div>
+
+
             <div class="card-body">
                 <div class="invoice-details mb-4">
-                    <h4 class="mb-3">Invoice Details</h4>
+                    <h4 class="mb-4">Invoice Details</h4>
+                    <div class="row mb-2">
+                        <div class="col-sm-3"><strong>Instansi</strong></div>
+                        <div class="col-sm-8">: {{ $invoice->reservation->customer->agency }}</div>
+                    </div>
                     <div class="row mb-2">
                         <div class="col-sm-3"><strong>Customer Name</strong></div>
                         <div class="col-sm-8">: {{ $invoice->reservation->customer->name }}</div>
