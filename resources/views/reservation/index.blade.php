@@ -254,6 +254,7 @@
                                 <th>Jenis Reservasi</th>
                                 <th>Checkin</th>
                                 <th>Sales</th>
+                                <th>Front Office</th>
                                 <th class="text-center">Action</th>
                             </tr>
                         </thead>
