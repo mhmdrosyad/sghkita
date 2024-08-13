@@ -70,12 +70,26 @@ class ReservationController extends Controller
 
     protected function generateUniqueOrderCode()
     {
-        do {
-            $orderCode = 'ORD' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
-        } while (Reservation::where('order_code', $orderCode)->exists());
+        // Ambil kode order terakhir yang ada di database
+        $lastOrder = Reservation::latest('created_at')->first();
+
+        if ($lastOrder) {
+            // Ambil kode order terakhir dan ekstrak nomor urut
+            $lastCode = $lastOrder->order_code;
+            $lastNumber = (int) substr($lastCode, 4); // Ambil nomor setelah 'ORD-'
+        } else {
+            // Jika belum ada kode order, mulai dari 1
+            $lastNumber = 0;
+        }
+
+        // Tambah nomor urut untuk kode baru
+        $newNumber = $lastNumber + 1; // Tidak perlu padding
+        $orderCode = 'ORD-00' . $newNumber;
 
         return $orderCode;
     }
+
+
 
     public function show(Reservation $reservation)
     {
