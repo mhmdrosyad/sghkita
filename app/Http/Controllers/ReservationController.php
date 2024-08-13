@@ -6,7 +6,7 @@ use App\Models\Reservation;
 use App\Models\Customer;
 use App\Models\ResCategory;
 use App\Models\Sales;
-use App\Models\Invoice; // Include the Invoice model
+use App\Models\Invoice;
 use Illuminate\Http\Request;
 
 class ReservationController extends Controller
@@ -47,17 +47,14 @@ class ReservationController extends Controller
             'note' => 'nullable|string',
             'id_sp' => 'nullable|exists:sales,id',
         ]);
-
-        // Generate a unique order code
         $orderCode = $this->generateUniqueOrderCode();
 
         // Prepare data
         $data = $request->all();
-        $data['order_code'] = $orderCode; // Automatically set order_code
-        $data['user_id'] = auth()->id(); // Automatically set user_id
-        $data['status'] = $data['status'] ?? 'waiting_list'; // Default status if not provided
+        $data['order_code'] = $orderCode;
+        $data['user_id'] = auth()->id();
+        $data['status'] = $data['status'] ?? 'waiting_list';
 
-        // Create the reservation
         $reservation = Reservation::create($data);
 
         // Create an invoice for the reservation
@@ -65,7 +62,7 @@ class ReservationController extends Controller
             'reservation_code' => $orderCode,
             'description' => 'Invoice for reservation ' . $orderCode,
             'user_id' => $data['user_id'],
-            'total_bill' => $data['rate'] * $data['pax'], // Example calculation, adjust as needed
+            'total_bill' => $data['rate'] * $data['pax'],
         ]);
 
         return redirect()->route('reservations.index')->with('success', 'Reservation and invoice created successfully.');
@@ -74,7 +71,6 @@ class ReservationController extends Controller
     protected function generateUniqueOrderCode()
     {
         do {
-            // Generate a unique order code. This is just an example; adjust as needed.
             $orderCode = 'ORD' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
         } while (Reservation::where('order_code', $orderCode)->exists());
 
@@ -112,22 +108,15 @@ class ReservationController extends Controller
 
     public function destroy($order_code)
     {
-        // Find the reservation by order_code
         $reservation = Reservation::where('order_code', $order_code)->first();
 
         if (!$reservation) {
-            // If reservation not found, redirect back with an error message
             return redirect()->route('reservations.index')->with('error', 'Reservation not found.');
         }
-
         try {
-            // Attempt to delete the reservation
             $reservation->delete();
-
-            // Redirect back with a success message
             return redirect()->route('reservations.index')->with('success', 'Reservation deleted successfully.');
         } catch (\Exception $e) {
-            // Handle any exceptions that occur during deletion
             return redirect()->route('reservations.index')->with('error', 'An error occurred while deleting the reservation.');
         }
     }

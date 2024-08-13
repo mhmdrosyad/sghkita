@@ -63,4 +63,8 @@ class Reservation extends Model
     {
         return $this->hasMany(Payment::class, 'reservation_code', 'order_code');
     }
+    public function checkins()
+    {
+        return $this->hasMany(Checkin::class);
+    }
 }

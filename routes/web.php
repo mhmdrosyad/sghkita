@@ -11,6 +11,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\PaymentsController;
+use App\Http\Controllers\CheckinController;
 use App\Http\Controllers\InvoiceItemController;
 use Illuminate\Support\Facades\Route;
 
@@ -101,9 +102,15 @@ Route::middleware('auth')->group(function () {
         Route::delete('invoices/{invoice}/items/{item}', [InvoiceController::class, 'deleteItem'])->name('invoice_items.destroy');
     });
 
-    Route::post('/payments/store', [PaymentsController::class, 'store'])->name('payments.store');
+    Route::prefix('checkins')->group(function () {
+        Route::get('/', [CheckinController::class, 'index'])->name('checkins.index');
+        Route::post('/store', [CheckinController::class, 'store'])->name('checkins.store');
+        Route::delete('/delete/{id}', [CheckinController::class, 'destroy'])->name('checkins.destroy');
+        Route::get('/checkins/reservation-data', [CheckinController::class, 'getReservationData'])->name('checkins.reservation-data');
+    });
 
-    // Delete a payment
+
+    Route::post('/payments/store', [PaymentsController::class, 'store'])->name('payments.store');
     Route::delete('/payments/delete/{id}', [PaymentsController::class, 'destroy'])->name('payments.destroy');
 });
 

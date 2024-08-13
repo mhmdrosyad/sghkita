@@ -22,8 +22,6 @@
                             <th>Kode Reservasi</th>
                             <th>Instansi</th>
                             <th>Nama</th>
-                            <!-- <th>Pax</th> -->
-                            <!-- <th>Harga/pax</th> -->
                             <th>Total Tagihan</th>
                             <th>Sales</th>
                             <th>Action</th>
@@ -32,17 +30,42 @@
                     <tbody>
                         @foreach($invoices as $invoice)
                         <tr>
-                            <td>{{$invoice->reservation->order_code}}</td>
-                            <td>{{$invoice->reservation->customer->agency}}</td>
-                            <td>{{$invoice->reservation->customer->name}}</td>
-                            <!-- <td>{{$invoice->reservation->pax}}</td> -->
-                            <!-- <td>{{$invoice->reservation->rate}}</td> -->
-                            <td>Rp. {{number_format($invoice->total_bill, 0, ',', '.')}}</td>
-                            <td>{{$invoice->reservation->sales->name}}</td>
-                            <td><a href="{{route('invoices.show', $invoice->id)}}" class="btn btn-sm btn-warning">Detail</a></td>
+                            <td>
+                                @if($invoice->reservation)
+                                {{ $invoice->reservation->order_code }}
+                                @else
+                                No reservation
+                                @endif
+                            </td>
+                            <td>
+                                @if($invoice->reservation && $invoice->reservation->customer)
+                                {{ $invoice->reservation->customer->agency }}
+                                @else
+                                No customer data
+                                @endif
+                            </td>
+                            <td>
+                                @if($invoice->reservation && $invoice->reservation->customer)
+                                {{ $invoice->reservation->customer->name }}
+                                @else
+                                No customer name
+                                @endif
+                            </td>
+                            <td>Rp. {{ number_format($invoice->total_bill, 0, ',', '.') }}</td>
+                            <td>
+                                @if($invoice->reservation && $invoice->reservation->sales)
+                                {{ $invoice->reservation->sales->name }}
+                                @else
+                                No sales data
+                                @endif
+                            </td>
+                            <td>
+                                <a href="{{ route('invoices.show', $invoice->id) }}" class="btn btn-sm btn-warning">Detail</a>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
+
                 </table>
             </div>
         </div>
