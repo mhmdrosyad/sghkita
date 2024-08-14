@@ -58,13 +58,19 @@ class Reservation extends Model
     {
         return $this->hasOne(Invoice::class, 'reservation_code', 'order_code');
     }
-    // In Reservation.php model
+
     public function payments()
     {
         return $this->hasMany(Payment::class, 'reservation_code', 'order_code');
     }
+
     public function checkins()
     {
         return $this->hasMany(Checkin::class);
+    }
+    // Model Reservation
+    public function totalPayments()
+    {
+        return $this->ledgerEntries->where('entry_type', 'payment')->sum('amount');
     }
 }

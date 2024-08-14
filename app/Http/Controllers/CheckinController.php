@@ -53,14 +53,6 @@ class CheckinController extends Controller
         return redirect()->route('checkins.index')->with('success', 'Check-in added successfully.');
     }
 
-    public function destroy($id)
-    {
-        $checkin = Checkin::findOrFail($id);
-        $checkin->delete();
-
-        return redirect()->route('checkins.index')->with('success', 'Check-in deleted successfully.');
-    }
-
     public function updateStatus(Request $request)
     {
         $request->validate([

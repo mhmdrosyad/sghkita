@@ -7,6 +7,13 @@
     </div>
     @endif
 
+    @if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+    @endif
+
+
     <div class="card mb-4">
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
@@ -35,7 +42,7 @@
                             <th>Tagihan</th>
                             <th>Check-In</th>
                             <th>Check-Out</th>
-                            <th>Status</th> <!-- Updated header -->
+                            <th class="text-center">Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -55,10 +62,10 @@
                                         data-checkin-id="{{ $checkin->id }}"
                                         data-new-status="checkout"
                                         style="font-size: 0.75rem; padding: 0.2rem 0.5rem; border: none; background: none; color: inherit; display: flex; align-items: center;">
-                                        <i class="lni lni-arrow-right" style="font-size: 1rem; color: white; background-color: red; border-radius: 50%; padding: 0.25rem;"></i>
+                                        <i class="lni lni-exit" style="font-size: 1rem; color: white; background-color: red; border-radius: 50%; padding: 0.25rem; transform: rotate(180deg);"></i>
                                     </button>
                                     @else
-                                    <span class="badge bg-danger" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">Check-Out</span>
+                                    <span class="badge bg-danger" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">CheckOut</span>
                                     @endif
                                 </div>
                             </td>
@@ -204,7 +211,7 @@
                                     if (data.success) {
                                         location.reload(); // Refresh the page to see the updated status
                                     } else {
-                                        alert('Error updating status');
+                                        alert(data.message); // Tampilkan pesan error
                                     }
                                 })
                                 .catch(error => {

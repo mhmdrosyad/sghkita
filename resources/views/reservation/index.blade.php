@@ -60,9 +60,9 @@
                                         <button class="btn btn-sm btn-primary me-2" data-bs-toggle="modal" data-bs-target="#detailReservationModal{{ $reservation->code_order }}">
                                             <i class="lni lni-eye"></i>
                                         </button>
-                                        <button class="btn btn-sm btn-warning me-2" data-bs-toggle="modal" data-bs-target="#editReservationModal{{ $reservation->code_order }}">
+                                        <!-- <button class="btn btn-sm btn-warning me-2" data-bs-toggle="modal" data-bs-target="#editReservationModal{{ $reservation->code_order }}">
                                             <i class="lni lni-pencil"></i>
-                                        </button>
+                                        </button> -->
                                         <!-- Assuming $reservation is your reservation model instance -->
                                         <form action="{{ route('reservations.destroy', $reservation->order_code) }}" method="POST">
                                             @csrf
@@ -268,9 +268,9 @@
                                         <button class="btn btn-sm btn-primary me-2" data-bs-toggle="modal" data-bs-target="#detailReservationModal{{ $reservation->order_code }}">
                                             <i class="lni lni-eye"></i>
                                         </button>
-                                        <button class="btn btn-sm btn-warning me-2" data-bs-toggle="modal" data-bs-target="#editReservationModal{{ $reservation->order_code }}">
+                                        <!-- <button class="btn btn-sm btn-warning me-2" data-bs-toggle="modal" data-bs-target="#editReservationModal{{ $reservation->order_code }}">
                                             <i class="lni lni-pencil"></i>
-                                        </button>
+                                        </button> -->
                                         <form action="{{ route('reservations.destroy', $reservation->order_code) }}" method="POST" class="mb-0">
                                             @csrf
                                             @method('DELETE')
