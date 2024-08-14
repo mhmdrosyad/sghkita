@@ -15,17 +15,19 @@ class CreateCheckinsTable extends Migration
     {
         Schema::create('checkins', function (Blueprint $table) {
             $table->id();
-            $table->string('reservation_code')->nullable(); // Ubah kolom ini menjadi nullable
-            $table->dateTime('checkin_time');
+            $table->string('reservation_code')->nullable();
             $table->string('guest_name');
-            $table->integer('pax');
-            $table->decimal('deposit', 10, 2);
-            $table->decimal('room_charge', 10, 2);
+            $table->string('instansi');
+            $table->decimal('total_tagihan', 10, 2);
+            $table->dateTime('checkin_time');
             $table->dateTime('checkout_time')->nullable();
+            $table->enum('status', ['checkin', 'checkout'])->default('checkin'); // Menambahkan kolom status
             $table->timestamps();
 
-            // Foreign key constraint
-            $table->foreign('reservation_code')->references('order_code')->on('reservations')->onDelete('cascade');
+            $table->foreign('reservation_code')
+                ->references('order_code')
+                ->on('reservations')
+                ->onDelete('set null');
         });
     }
 

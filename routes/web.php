@@ -107,6 +107,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/store', [CheckinController::class, 'store'])->name('checkins.store');
         Route::delete('/delete/{id}', [CheckinController::class, 'destroy'])->name('checkins.destroy');
         Route::get('/checkins/reservation-data', [CheckinController::class, 'getReservationData'])->name('checkins.reservation-data');
+        Route::post('/update-status', [CheckinController::class, 'updateStatus'])->name('checkins.update-status');
+        Route::get('history', [CheckinController::class, 'history'])->name('checkins.history');
     });
 
 

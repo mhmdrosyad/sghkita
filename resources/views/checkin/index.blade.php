@@ -11,9 +11,15 @@
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
                 <h4 class="fw-bolder">Daftar Checkin</h4>
-                <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addCheckinModal">
-                    <i class="ti ti-plus"></i><span class="ms-1">Add Checkin</span>
-                </button>
+                <div>
+                    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addCheckinModal">
+                        <i class="ti ti-plus"></i><span cla ss="ms-1">Add Checkin</span>
+                    </button>
+                    <a href="{{ route('checkins.history') }}" class="btn btn-secondary mb-3 ms-2">
+                        <i class="lni lni-history"></i><span class="ms-1">History</span>
+                    </a>
+
+                </div>
             </div>
         </div>
 
@@ -25,12 +31,11 @@
                         <tr>
                             <th>Order Code</th>
                             <th>Nama</th>
-                            <th>Pax</th>
-                            <th>Rate</th>
-                            <th>Deposit</th>
+                            <th>Instansi</th>
+                            <th>Tagihan</th>
                             <th>Check-In</th>
                             <th>Check-Out</th>
-                            <th>Actions</th>
+                            <th>Status</th> <!-- Updated header -->
                         </tr>
                     </thead>
                     <tbody>
@@ -38,22 +43,28 @@
                         <tr>
                             <td>{{ $checkin->reservation ? $checkin->reservation->order_code : '-' }}</td>
                             <td>{{ $checkin->guest_name }}</td>
-                            <td>{{ $checkin->pax }}</td>
-                            <td>{{ $checkin->room_charge }}</td>
-                            <td>{{ $checkin->deposit }}</td>
+                            <td>{{ $checkin->instansi }}</td>
+                            <td>{{ number_format($checkin->total_tagihan, 0, ',', '.') }}</td>
                             <td>{{ $checkin->checkin_time }}</td>
                             <td>{{ $checkin->checkout_time }}</td>
                             <td>
-                                <button type="button" class="btn btn-danger btn-sm delete-checkin" data-checkin-id="{{ $checkin->id }}">Delete</button>
-                                <form id="delete-form-{{ $checkin->id }}" action="{{ route('checkins.destroy', $checkin->id) }}" method="POST" style="display:none;">
-                                    @csrf
-                                    @method('DELETE')
-                                </form>
+                                <div class="d-flex align-items-center">
+                                    @if ($checkin->status === 'checkin')
+                                    <span class="badge bg-success me-2" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">Check-In</span>
+                                    <button type="button" class="btn btn-warning btn-sm btn-icon change-status"
+                                        data-checkin-id="{{ $checkin->id }}"
+                                        data-new-status="checkout"
+                                        style="font-size: 0.75rem; padding: 0.2rem 0.5rem; border: none; background: none; color: inherit; display: flex; align-items: center;">
+                                        <i class="lni lni-arrow-right" style="font-size: 1rem; color: white; background-color: red; border-radius: 50%; padding: 0.25rem;"></i>
+                                    </button>
+                                    @else
+                                    <span class="badge bg-danger" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">Check-Out</span>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                         @endforeach
                     </tbody>
-
                 </table>
             </div>
         </div>
@@ -73,16 +84,8 @@
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="use_reservation" class="form-label">Use Reservation?</label>
-                            <select name="use_reservation" id="use_reservation" class="form-select" required>
-                                <option value="yes">Yes</option>
-                                <option value="no">No</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3" id="reservation_code_container">
                             <label for="order_code" class="form-label">Order Code</label>
-                            <select name="order_code" id="order_code" class="form-select">
+                            <select name="order_code" id="order_code" class="form-select" required>
                                 <option value="">Select Order Code</option>
                                 @foreach ($activeReservations as $reservation)
                                 <option value="{{ $reservation->order_code }}">{{ $reservation->order_code }} - {{ $reservation->customer->name }}</option>
@@ -92,19 +95,15 @@
 
                         <div class="mb-3">
                             <label for="guest_name" class="form-label">Guest Name</label>
-                            <input type="text" name="guest_name" id="guest_name" class="form-control" required>
+                            <input type="text" name="guest_name" id="guest_name" class="form-control" readonly required>
                         </div>
                         <div class="mb-3">
-                            <label for="pax" class="form-label">Pax</label>
-                            <input type="number" name="pax" id="pax" class="form-control" required>
+                            <label for="instansi" class="form-label">Instansi</label>
+                            <input type="text" name="instansi" id="instansi" class="form-control" readonly required>
                         </div>
                         <div class="mb-3">
-                            <label for="room_charge" class="form-label">Room Charge</label>
-                            <input type="text" name="room_charge" id="room_charge" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="deposit" class="form-label">Deposit</label>
-                            <input type="text" name="deposit" id="deposit" class="form-control" required>
+                            <label for="total_tagihan" class="form-label">Total Tagihan</label>
+                            <input type="text" name="total_tagihan" id="total_tagihan" class="form-control" readonly required>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
@@ -135,69 +134,86 @@
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 // Initialize DataTable
-                $('#checkinTable').DataTable();
+                const table = $('#checkinTable').DataTable();
 
-                // Handle Delete Button Click
-                document.querySelectorAll('.delete-checkin').forEach(button => {
-                    button.addEventListener('click', function() {
-                        const checkinId = this.getAttribute('data-checkin-id');
-                        if (confirm('Are you sure you want to delete this check-in?')) {
-                            document.getElementById(`delete-form-${checkinId}`).submit();
-                        }
-                    });
-                });
-
-                // Handle Use Reservation Selection Change
-                const useReservationSelect = document.getElementById('use_reservation');
-                const reservationCodeContainer = document.getElementById('reservation_code_container');
+                // Handle order code selection
                 const orderCodeSelect = document.getElementById('order_code');
                 const guestNameInput = document.getElementById('guest_name');
-                const paxInput = document.getElementById('pax');
-                const roomChargeInput = document.getElementById('room_charge');
-                const depositInput = document.getElementById('deposit');
+                const instansiInput = document.getElementById('instansi');
+                const totalTagihanInput = document.getElementById('total_tagihan');
+                const checkinTimeInput = document.getElementById('checkin_time');
+                const checkoutTimeInput = document.getElementById('checkout_time');
 
-                useReservationSelect.addEventListener('change', function() {
-                    const useReservation = this.value === 'yes';
-                    reservationCodeContainer.style.display = useReservation ? 'block' : 'none';
-                    orderCodeSelect.required = useReservation;
-                    guestNameInput.readOnly = useReservation;
-                    paxInput.readOnly = useReservation;
-                    roomChargeInput.readOnly = useReservation;
-                    depositInput.readOnly = useReservation;
-
-                    if (!useReservation) {
-                        // Clear fields if "Use Reservation" is set to "No"
-                        orderCodeSelect.value = ''; // Clear the order code value
-                        guestNameInput.value = '';
-                        paxInput.value = '';
-                        roomChargeInput.value = '';
-                        depositInput.value = '';
-                        document.getElementById('checkin_time').value = '';
-                        document.getElementById('checkout_time').value = '';
-                    }
-                });
-
-
-                // Handle Order Code Change
                 orderCodeSelect.addEventListener('change', function() {
                     const orderCode = this.value;
+
                     if (orderCode) {
-                        fetch(`{{ route('checkins.reservation-data') }}?order_code=${orderCode}`)
+                        fetch(`{{ route('checkins.reservation-data') }}?order_code=${orderCode}`, {
+                                method: 'GET',
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                }
+                            })
                             .then(response => response.json())
                             .then(data => {
                                 if (data.error) {
                                     alert(data.error);
                                 } else {
-                                    document.getElementById('guest_name').value = data.guest_name;
-                                    document.getElementById('pax').value = data.pax;
-                                    document.getElementById('room_charge').value = data.room_charge;
-                                    document.getElementById('deposit').value = data.deposit;
-                                    document.getElementById('checkin_time').value = data.checkin_time;
-                                    document.getElementById('checkout_time').value = data.checkout_time;
+                                    guestNameInput.value = data.guest_name || '';
+                                    instansiInput.value = data.instansi || '';
+                                    totalTagihanInput.value = data.total_tagihan || '';
+                                    checkinTimeInput.value = data.checkin_time || '';
+                                    checkoutTimeInput.value = data.checkout_time || '';
                                 }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
                             });
+                    } else {
+                        // Clear fields if no order code is selected
+                        guestNameInput.value = '';
+                        instansiInput.value = '';
+                        totalTagihanInput.value = '';
+                        checkinTimeInput.value = '';
+                        checkoutTimeInput.value = '';
                     }
                 });
+
+                // Handle check-in/check-out status change
+                document.querySelectorAll('.change-status').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const checkinId = this.getAttribute('data-checkin-id');
+                        const newStatus = this.getAttribute('data-new-status');
+                        const statusText = newStatus === 'checkout' ? 'Check-Out' : 'Check-In';
+
+                        if (confirm(`Are you sure you want to ${statusText} now?`)) {
+                            fetch(`{{ route('checkins.update-status') }}`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                    },
+                                    body: JSON.stringify({
+                                        checkin_id: checkinId,
+                                        status: newStatus
+                                    })
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        location.reload(); // Refresh the page to see the updated status
+                                    } else {
+                                        alert('Error updating status');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                });
+                        }
+                    });
+                });
+
             });
         </script>
     </x-slot>
