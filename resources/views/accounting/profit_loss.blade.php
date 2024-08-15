@@ -5,14 +5,18 @@
                 <h2>Laporan Laba Rugi {{\Carbon\Carbon::createFromFormat('m-Y',
                     $period)->translatedFormat('F Y')}}</h2>
             </div>
-            <div class="right">
+            <div class="right d-flex gap-2">
+                <button type="button" class="main-btn success-btn btn-hover" data-bs-toggle="modal"
+                    data-bs-target="#importModal"><i class="lni lni-plus"></i>Import Lap. Bulanan</button>
                 <div class="dropdown">
-                    <button class="main-btn primary-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="main-btn primary-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
                         Pilih Bulan
                     </button>
                     <ul class="dropdown-menu">
                         @foreach($periods as $period)
-                        <li><a class="dropdown-item" href="{{route('accounting.profitLoss', ['period' => $period->month])}}">{{\Carbon\Carbon::createFromFormat('m-Y',
+                        <li><a class="dropdown-item"
+                                href="{{route('accounting.profitLoss', ['period' => $period->month])}}">{{\Carbon\Carbon::createFromFormat('m-Y',
                                 $period->month)->translatedFormat('F Y')}}</a>
                         </li>
                         @endforeach
@@ -20,6 +24,28 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="row">
+        @if ($errors->any())
+        <div class="alert-box danger-alert" role="alert">
+            <div class=" alert">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+        @endif
+        @if (session('success'))
+        <div class="alert-box success-alert" role="alert">
+            <div class=" alert">
+                <p class="text-medium">
+                    {{ session('success') }}
+                </p>
+            </div>
+        </div>
+        @endif
     </div>
     <div class="row">
         <div class="col">
@@ -136,7 +162,31 @@
             </div>
         </div>
     </div>
-
+    <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6>Import Lap. Bulanan</h6>
+                    <button type="button" class="btn d-flex align-items-center fs-4 text-danger" data-bs-dismiss="modal"
+                        aria-label="Close"><i class="lni lni-cross-circle"></i></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('accounting.import') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="input-style-1">
+                            <label>Upload File Ecel:</label>
+                            <input name="file" type="file" required />
+                        </div>
+                        <div class="col-12 d-flex gap-3">
+                            <button type="reset" class="main-btn warning-btn btn-hover"><i
+                                    class="lni lni-trash-can"></i></button>
+                            <button type="submit" class="main-btn primary-btn btn-hover flex-fill">Upload</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <x-slot name="scripts">
         <script>

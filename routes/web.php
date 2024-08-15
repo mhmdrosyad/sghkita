@@ -57,6 +57,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('accounting')->group(function () {
         Route::get('balance-sheet', [AccountingController::class, 'balanceSheet'])->name('accounting.balanceSheet');
         Route::get('profit-loss', [AccountingController::class, 'profitLoss'])->name('accounting.profitLoss');
+        Route::post('import', [AccountingController::class, 'import'])->name('accounting.import');
     });
 
     // Add the Customer routes
