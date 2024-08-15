@@ -60,9 +60,9 @@
                                         <button class="btn btn-sm btn-primary me-2" data-bs-toggle="modal" data-bs-target="#detailReservationModal{{ $reservation->code_order }}">
                                             <i class="lni lni-eye"></i>
                                         </button>
-                                        <button class="btn btn-sm btn-warning me-2" data-bs-toggle="modal" data-bs-target="#editReservationModal{{ $reservation->code_order }}">
+                                        <!-- <button class="btn btn-sm btn-warning me-2" data-bs-toggle="modal" data-bs-target="#editReservationModal{{ $reservation->code_order }}">
                                             <i class="lni lni-pencil"></i>
-                                        </button>
+                                        </button> -->
                                         <!-- Assuming $reservation is your reservation model instance -->
                                         <form action="{{ route('reservations.destroy', $reservation->order_code) }}" method="POST">
                                             @csrf
@@ -77,7 +77,6 @@
                             <div class="modal fade" id="detailReservationModal{{ $reservation->code_order }}" tabindex="-1" aria-labelledby="detailReservationModalLabel{{ $reservation->code_order }}" aria-hidden="true">
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
-
                                         <div class="modal-header">
                                             <h5 class="modal-title" id="detailReservationModalLabel{{ $reservation->code_order }}">Detail Reservation</h5>
                                             <button type="button" class="btn-close btn-light" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -159,8 +158,6 @@
                                 </div>
                             </div>
 
-
-
                             <!-- Edit Reservation Modal -->
                             <div class="modal fade" id="editReservationModal{{ $reservation->id }}" tabindex="-1" aria-labelledby="editReservationModalLabel{{ $reservation->id }}" aria-hidden="true">
                                 <div class="modal-dialog modal-lg">
@@ -232,14 +229,12 @@
                                     </div>
                                 </div>
                             </div>
-
                             @endforeach
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
-
         <!-- Waiting List Reservations -->
         <div class="card mb-4">
             <div class="card-header">
@@ -273,9 +268,9 @@
                                         <button class="btn btn-sm btn-primary me-2" data-bs-toggle="modal" data-bs-target="#detailReservationModal{{ $reservation->order_code }}">
                                             <i class="lni lni-eye"></i>
                                         </button>
-                                        <button class="btn btn-sm btn-warning me-2" data-bs-toggle="modal" data-bs-target="#editReservationModal{{ $reservation->order_code }}">
+                                        <!-- <button class="btn btn-sm btn-warning me-2" data-bs-toggle="modal" data-bs-target="#editReservationModal{{ $reservation->order_code }}">
                                             <i class="lni lni-pencil"></i>
-                                        </button>
+                                        </button> -->
                                         <form action="{{ route('reservations.destroy', $reservation->order_code) }}" method="POST" class="mb-0">
                                             @csrf
                                             @method('DELETE')
@@ -385,10 +380,12 @@
                                             <form action="{{ route('reservations.update', $reservation->order_code) }}" method="POST">
                                                 @csrf
                                                 @method('PUT')
+                                                <input type="hidden" name="order_code" value="{{ $reservation->order_code }}">
+
                                                 <div class="row mb-3">
                                                     <div class="col-md-6">
-                                                        <label for="id_customer{{ $reservation->id }}" class="form-label">Customer</label>
-                                                        <select name="id_customer" id="id_customer{{ $reservation->id }}" class="form-select" required>
+                                                        <label for="customer_id{{ $reservation->order_code }}" class="form-label">Customer</label>
+                                                        <select name="customer_id" id="customer_id{{ $reservation->order_code }}" class="form-select" required>
                                                             <option value="" selected disabled>Select Customer</option>
                                                             @foreach($customers as $customer)
                                                             <option value="{{ $customer->id }}" {{ $reservation->customer_id == $customer->id ? 'selected' : '' }}>{{ $customer->name }} ({{ $customer->agency }})</option>
@@ -396,37 +393,37 @@
                                                         </select>
                                                     </div>
                                                     <div class="col-md-6">
-                                                        <label for="id_rescategory{{ $reservation->id }}" class="form-label">Reservation Type</label>
-                                                        <select name="id_rescategory" id="id_rescategory{{ $reservation->id }}" class="form-select" required>
+                                                        <label for="res_category_id{{ $reservation->order_code }}" class="form-label">Reservation Type</label>
+                                                        <select name="res_category_id" id="res_category_id{{ $reservation->order_code }}" class="form-select" required>
                                                             <option value="" selected disabled>Select Category</option>
                                                             @foreach($resCategories as $resCategory)
-                                                            <option value="{{ $resCategory->id }}" {{ $reservation->id_rescategory == $resCategory->id ? 'selected' : '' }}>{{ $resCategory->name }}</option>
+                                                            <option value="{{ $resCategory->id_rescategory }}" {{ $reservation->res_category_id == $resCategory->id_rescategory ? 'selected' : '' }}>{{ $resCategory->name }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="row mb-3">
                                                     <div class="col-md-6">
-                                                        <label for="checkin{{ $reservation->id }}" class="form-label">Checkin</label>
-                                                        <input type="date" name="checkin" id="checkin{{ $reservation->id }}" class="form-control" value="{{ $reservation->checkin->format('Y-m-d') }}" required>
+                                                        <label for="checkin{{ $reservation->order_code }}" class="form-label">Checkin</label>
+                                                        <input type="date" name="checkin" id="checkin{{ $reservation->order_code }}" class="form-control" value="{{ $reservation->checkin->format('Y-m-d') }}" required>
                                                     </div>
                                                     <div class="col-md-6">
-                                                        <label for="checkout{{ $reservation->id }}" class="form-label">Checkout</label>
-                                                        <input type="date" name="checkout" id="checkout{{ $reservation->id }}" class="form-control" value="{{ $reservation->checkout->format('Y-m-d') }}" required>
+                                                        <label for="checkout{{ $reservation->order_code }}" class="form-label">Checkout</label>
+                                                        <input type="date" name="checkout" id="checkout{{ $reservation->order_code }}" class="form-control" value="{{ $reservation->checkout->format('Y-m-d') }}" required>
                                                     </div>
                                                 </div>
                                                 <div class="row mb-3">
                                                     <div class="col-md-3">
-                                                        <label for="pax{{ $reservation->id }}" class="form-label">Pax</label>
-                                                        <input type="number" name="pax" id="pax{{ $reservation->id }}" class="form-control" value="{{ $reservation->pax }}" required>
+                                                        <label for="pax{{ $reservation->order_code }}" class="form-label">Pax</label>
+                                                        <input type="number" name="pax" id="pax{{ $reservation->order_code }}" class="form-control" value="{{ $reservation->pax }}" required>
                                                     </div>
                                                     <div class="col-md-4">
-                                                        <label for="rate{{ $reservation->id }}" class="form-label">Price / Pax</label>
-                                                        <input type="number" name="rate" id="rate{{ $reservation->id }}" class="form-control" step="0.01" value="{{ $reservation->rate }}" required>
+                                                        <label for="rate{{ $reservation->order_code }}" class="form-label">Price / Pax</label>
+                                                        <input type="number" name="rate" id="rate{{ $reservation->order_code }}" class="form-control" step="0.01" value="{{ $reservation->rate }}" required>
                                                     </div>
                                                     <div class="col-md-5">
-                                                        <label for="id_sp{{ $reservation->id }}" class="form-label">Sales</label>
-                                                        <select name="id_sp" id="id_sp{{ $reservation->id }}" class="form-select" required>
+                                                        <label for="id_sp{{ $reservation->order_code }}" class="form-label">Sales</label>
+                                                        <select name="id_sp" id="id_sp{{ $reservation->order_code }}" class="form-select" required>
                                                             <option value="" selected disabled>Select Sales</option>
                                                             @foreach($sales as $sp)
                                                             <option value="{{ $sp->id }}" {{ $reservation->id_sp == $sp->id ? 'selected' : '' }}>{{ $sp->name }}</option>
@@ -434,6 +431,7 @@
                                                         </select>
                                                     </div>
                                                 </div>
+                                                <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                     <button type="submit" class="btn btn-primary">Save changes</button>
@@ -443,6 +441,7 @@
                                     </div>
                                 </div>
                             </div>
+
 
                             @endforeach
                         </tbody>
@@ -521,7 +520,6 @@
             </div>
         </div>
     </div>
-
 
     <x-slot name="scripts">
         <script>

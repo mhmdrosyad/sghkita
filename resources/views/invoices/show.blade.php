@@ -8,21 +8,55 @@
         @endif
 
         <div class="card">
-            <div class="card-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h3>Invoice {{ $invoice->reservation->order_code }}</h3>
-                </div>
+            <div class="card-header text-center">
+                <h3>
+                    Invoice Code : <strong class="text-primary">{{ $invoice->reservation->order_code }}</strong> |
+                    {{ $invoice->reservation->customer->agency }}
+                </h3>
             </div>
+
+
             <div class="card-body">
                 <div class="invoice-details mb-4">
-                    <h4 class="mb-3">Invoice Details</h4>
-                    <p><strong>Customer Name:</strong> {{ $invoice->reservation->customer->name }}</p>
-                    <p><strong>Order Code:</strong> {{ $invoice->reservation->order_code }}</p>
-                    <p><strong>Reservation Category:</strong> {{ $invoice->reservation->resCategory->name }}</p>
-                    <p><strong>Number of Pax:</strong> {{ $invoice->reservation->pax }}</p>
-                    <p><strong>Rate per Pax:</strong> {{ number_format($invoice->reservation->rate, 0, '.', '.') }}</p>
-                    <p><strong>Total Amount:</strong> {{ number_format($invoice->reservation->rate * $invoice->reservation->pax, 0, '.', '.') }}</p>
+                    <h4 class="mb-4">Invoice Details</h4>
+                    <div class="row mb-2">
+                        <div class="col-sm-3"><strong>Instansi</strong></div>
+                        <div class="col-sm-8">: {{ $invoice->reservation->customer->agency }}</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-sm-3"><strong>Customer Name</strong></div>
+                        <div class="col-sm-8">: {{ $invoice->reservation->customer->name }}</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-sm-3"><strong>Order Code</strong></div>
+                        <div class="col-sm-8">: {{ $invoice->reservation->order_code }}</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-sm-3"><strong>Reservation Category</strong></div>
+                        <div class="col-sm-8">: {{ $invoice->reservation->resCategory->name }}</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-sm-3"><strong>Number of Pax</strong></div>
+                        <div class="col-sm-8">: {{ $invoice->reservation->pax }}</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-sm-3"><strong>Rate per Pax</strong></div>
+                        <div class="col-sm-8">: {{ number_format($invoice->reservation->rate, 0, '.', '.') }}</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-sm-3"><strong>Total Amount</strong></div>
+                        <div class="col-sm-8">: {{ number_format($invoice->reservation->rate * $invoice->reservation->pax, 0, '.', '.') }}</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-sm-3"><strong>Sales</strong></div>
+                        <div class="col-sm-8">: {{ $invoice->reservation->sales->name }}</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-sm-3"><strong>Front Office</strong></div>
+                        <div class="col-sm-8">: {{ $invoice->reservation->user->name }}</div>
+                    </div>
                 </div>
+
 
                 <!-- Invoice Items Section -->
                 <div class="invoice-items mb-4">
@@ -38,7 +72,7 @@
                                     <th>Rate</th>
                                     <th>Qty</th>
                                     <th>Total</th>
-                                    <th>Actions</th> <!-- New column for actions -->
+                                    <th class="text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -55,23 +89,24 @@
                                     <td>{{ number_format($item->rate, 0, '.', '.') }}</td>
                                     <td>{{ $item->pax }}</td>
                                     <td>{{ number_format($item->rate * $item->pax, 0, '.', '.') }}</td>
-                                    <td>
+                                    <td class="text-center">
                                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editItemModal-{{ $item->id }}">Edit</button>
                                         <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteItemModal-{{ $item->id }}">Delete</button>
                                     </td>
                                 </tr>
                                 @endforeach
                                 <!-- Total Row -->
-                                <tr>
-                                    <td colspan="4" class="text-end"><strong>Total</strong></td>
-                                    <td>
-                                        {{ number_format(
-                                            $invoice->items->sum(function($item) {
-                                                return $item->rate * $item->pax;
-                                            }) + ($invoice->reservation->rate * $invoice->reservation->pax),
-                                            0, '.', '.'
-                                        ) }}
-                                    </td>
+                                <tr class="">
+                                    <td colspan="3" class="text-end"><strong>Total:</strong></td> <!-- Adjust colspan to 3 -->
+                                    <td class="text-primary"><strong>
+                                            Rp. {{ number_format(
+                        $invoice->items->sum(function($item) {
+                            return $item->rate * $item->pax;
+                        }) + ($invoice->reservation->rate * $invoice->reservation->pax),
+                        0, '.', '.'
+                    ) }}
+                                        </strong></td>
+                                    <td></td> <!-- Empty cell to align with action column -->
                                 </tr>
                             </tbody>
                         </table>
@@ -84,15 +119,15 @@
                 <!-- Payments List -->
                 @if($invoice->payments->isNotEmpty())
                 <div class="invoice-items mt-4">
-                    <h4 class="mb-3">Payments</h4>
+                    <h4 class="mb-2">Payments</h4>
                     <div class="table-wrapper table-responsive">
                         <table class="table striped-table">
                             <thead>
                                 <tr>
                                     <th>Type</th>
                                     <th>Transaction ID</th>
-                                    <th>Total</th>
                                     <th>Date</th>
+                                    <th>Nominal</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -100,8 +135,8 @@
                                 <tr>
                                     <td>{{ $payment->type }}</td>
                                     <td>{{ $payment->transaction_id }}</td>
-                                    <td>{{ number_format($payment->transaction->nominal, 0, '.', '.') }}</td>
                                     <td>{{ $payment->created_at->format('d/m/Y') }}</td>
+                                    <td>{{ number_format($payment->transaction->nominal, 0, '.', '.') }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -111,21 +146,23 @@
                 @endif
 
                 <!-- Kurang Bayar -->
-                <div class="kurang-bayar mt-4 text-end">
-                    <div class="p-3 border rounded bg-light">
+                <div class="kurang-bayar-container mt-4 text-end">
+                    <div class="p-3 border rounded bg-light d-inline-block">
                         <h4 class="mb-0">
                             <span>Kurang Bayar:</span>
                             <span class="text-danger ms-2">
                                 Rp. {{ number_format(
-                                    ($invoice->items->sum(function($item) {
-                                        return $item->rate * $item->pax;
-                                    }) + ($invoice->reservation->rate * $invoice->reservation->pax)) - $invoice->payments->sum('transaction.nominal'),
-                                    0, '.', '.'
-                                ) }}
+                    ($invoice->items->sum(function($item) {
+                        return $item->rate * $item->pax;
+                    }) + ($invoice->reservation->rate * $invoice->reservation->pax)) - $invoice->payments->sum('transaction.nominal'),
+                    0, '.', '.'
+                ) }}
                             </span>
                         </h4>
                     </div>
                 </div>
+
+
 
                 <!-- Add Payment Modal -->
                 <div class="modal fade" id="addPaymentModal" tabindex="-1" aria-labelledby="addPaymentModalLabel" aria-hidden="true">
