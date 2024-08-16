@@ -43,7 +43,7 @@
                             <th>Alamat KTP</th>
                             <th>No. HP 1</th>
                             <th>No. HP 2</th>
-                            <th>Action</th>
+                            <th class="text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -63,7 +63,7 @@
                                     <form action="{{ route('sales.destroy', $sale->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger"><i class="lni lni-trash"></i></button>
+                                        <button type="submit" class="btn btn-sm btn-danger"><i class="lni lni-trash-can"></i></button>
                                     </form>
                                 </div>
                             </td>
