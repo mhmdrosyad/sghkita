@@ -92,10 +92,13 @@ class AccountingController extends Controller
     {
         $request->validate([
             'file' => 'required|mimes:xlsx,xls',
+            'month' => 'required|date_format:m-Y',
         ]);
 
+        $month = $request->input('month');
+
         try {
-            Excel::import(new MonthlyBalanceImport, $request->file('file'));
+            Excel::import(new MonthlyBalanceImport($month), $request->file('file'));
             return redirect()->back()->with('success', 'Accounts imported successfully.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'There was an error importing the accounts: ' . $e->getMessage());

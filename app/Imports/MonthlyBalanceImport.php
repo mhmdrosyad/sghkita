@@ -11,6 +11,12 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
 class MonthlyBalanceImport implements ToModel, WithHeadingRow
 {
+    protected $importMonth;
+
+    public function __construct($importMonth)
+    {
+        $this->importMonth = $importMonth;
+    }
 
     public function model(array $row)
     {
@@ -20,7 +26,7 @@ class MonthlyBalanceImport implements ToModel, WithHeadingRow
                 throw new \Exception("Invalid credit account code: " . $row['kode']);
             }
 
-            $month = Carbon::createFromFormat('m-Y', '01-2024');
+            $month = Carbon::createFromFormat('m-Y', $this->importMonth);
             $balance = floatval($row['saldo']);
             $formattedBalance = number_format($balance, 2, '.', '');
 
