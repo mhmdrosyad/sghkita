@@ -7,10 +7,12 @@ use App\Models\Account;
 use App\Models\Category;
 use App\Models\LedgerEntry;
 use App\Models\MonthlyBalance;
+use App\Models\NoteTransaction;
 use Illuminate\Http\Request;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
 
@@ -64,7 +66,15 @@ class TransactionController extends Controller
                                 </button>
                             </div>';
                 })
-                ->rawColumns(['action'])
+                ->addColumn('view_image', function ($entry) {
+                    if ($entry->transaction->noteTransaction && $entry->transaction->noteTransaction->img_src) {
+                        return '<div class="action"><button class="view-image-btn" data-bs-toggle="modal" data-bs-target="#imageModal" data-image="' . asset('storage/' . $entry->transaction->noteTransaction->img_src) . '">
+                                    <i class="lni lni-eye"></i>
+                                </button></div>';
+                    }
+                    return '';
+                })
+                ->rawColumns(['action', 'view_image'])
                 ->make(true);
         }
 
@@ -133,6 +143,10 @@ class TransactionController extends Controller
             return redirect()->back()->withErrors(['category_code' => 'Invalid category code.']);
         }
 
+        if ($category->type === 'out' && !$request->filled('image')) {
+            return redirect()->back()->withErrors(['image' => 'Foto nota wajib diisi untuk kategori ini.']);
+        }
+
         $debetAccount = $category->debitAccount;
         $creditAccount = $category->creditAccount;
 
@@ -192,6 +206,26 @@ class TransactionController extends Controller
             ]);
         }
 
+        $transactionId = $transaction->id;
+        $img = $request->input('image');
+        $filePath = null;
+
+        if ($img) {
+            $image_parts = explode(";base64,", $img);
+            $image_type_aux = explode("image/", $image_parts[0]);
+            $image_type = $image_type_aux[1];
+            $image_base64 = base64_decode($image_parts[1]);
+            $fileName = 'nota_' . time() . '.' . $image_type;
+            $filePath = 'img/nota/' . $fileName;
+
+            Storage::disk('public')->put($filePath, $image_base64);
+            $noteTransaction = new NoteTransaction();
+            $noteTransaction->transaction_id = $transactionId;
+            $noteTransaction->img_src = $filePath;
+            $noteTransaction->save();
+        }
+
+
         $account_code = $request->account_code;
         if ($account_code) {
             return redirect()->route('transaction.index', ['account' => $account_code])->with('success', 'Transaction added successfully.');
@@ -204,6 +238,15 @@ class TransactionController extends Controller
     {
         $transaction = Transaction::find($id);
         if ($transaction) {
+            $noteTransaction = $transaction->noteTransaction;
+            if ($noteTransaction && $noteTransaction->img_src) {
+                $filePath = 'public/' . $noteTransaction->img_src;
+                if (Storage::exists($filePath)) {
+                    Storage::delete($filePath);
+                }
+                $noteTransaction->delete();
+            }
+
             $transaction->delete();
             return response()->json(['success' => 'Transaction deleted successfully']);
         }
