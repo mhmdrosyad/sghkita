@@ -174,6 +174,9 @@
                     <form action="{{ route('accounting.import') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="input-style-1">
+                            <input type="text" name="month" placeholder="MM-YYYY" required>
+                        </div>
+                        <div class="input-style-1">
                             <label>Upload File Ecel:</label>
                             <input name="file" type="file" required />
                         </div>
