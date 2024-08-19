@@ -30,7 +30,7 @@ class AccountingController extends Controller
 
         foreach ($accounts as $account) {
             $balance = $monthlyBalances->get($account->code);
-            $accountBalance = $balance ? $balance->balance : 0;
+            $accountBalance = $balance ? $balance->balance : $account->current_balance;
 
             if ($account->position == 'asset') {
                 $activaAccounts[] = [
