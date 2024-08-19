@@ -13,9 +13,9 @@ class UpdateReservationCodeNullableInInvoices extends Migration
      */
     public function up()
     {
-        Schema::table('invoices', function (Blueprint $table) {
-            $table->string('reservation_code')->nullable()->change(); // Mengubah kolom menjadi nullable
-        });
+        // Schema::table('invoices', function (Blueprint $table) {
+        //     $table->string('reservation_code')->nullable()->change(); // Mengubah kolom menjadi nullable
+        // });
     }
 
     /**
@@ -25,8 +25,8 @@ class UpdateReservationCodeNullableInInvoices extends Migration
      */
     public function down()
     {
-        Schema::table('invoices', function (Blueprint $table) {
-            $table->string('reservation_code')->change(); // Mengembalikan kolom ke keadaan semula jika rollback
-        });
+        // Schema::table('invoices', function (Blueprint $table) {
+        //     $table->string('reservation_code')->change(); // Mengembalikan kolom ke keadaan semula jika rollback
+        // });
     }
 }

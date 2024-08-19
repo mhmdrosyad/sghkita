@@ -13,9 +13,9 @@ class UpdateReservationCodeNullableInCheckins extends Migration
      */
     public function up()
     {
-        Schema::table('checkins', function (Blueprint $table) {
-            $table->string('reservation_code')->nullable()->change();
-        });
+        // Schema::table('checkins', function (Blueprint $table) {
+        //     $table->string('reservation_code')->nullable()->change();
+        // });
     }
 
     /**
@@ -25,8 +25,8 @@ class UpdateReservationCodeNullableInCheckins extends Migration
      */
     public function down()
     {
-        Schema::table('checkins', function (Blueprint $table) {
-            $table->string('reservation_code')->nullable(false)->change();
-        });
+        // Schema::table('checkins', function (Blueprint $table) {
+        //     $table->string('reservation_code')->nullable(false)->change();
+        // });
     }
 }
