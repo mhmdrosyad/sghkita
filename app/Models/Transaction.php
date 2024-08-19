@@ -41,4 +41,9 @@ class Transaction extends Model
     {
         return $this->hasMany(LedgerEntry::class);
     }
+
+    public function noteTransaction()
+    {
+        return $this->hasOne(NoteTransaction::class);
+    }
 }

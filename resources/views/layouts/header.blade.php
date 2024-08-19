@@ -25,11 +25,11 @@
                             <div class="profile-info">
                                 <div class="info">
                                     <div class="image">
-                                        <img src="/images/profile/profile-image.png" alt="" />
+                                        <img src="/images/profile/no-photo.jpg" alt="" />
                                     </div>
                                     <div>
-                                        <h6 class="fw-500">Adam Joe</h6>
-                                        <p>Admin</p>
+                                        <h6 class="fw-500">{{ Auth::user()->name }}</h6>
+                                        <p>{{ Auth::user()->name }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -38,16 +38,16 @@
                             <li>
                                 <div class="author-info flex items-center !p-1">
                                     <div class="image">
-                                        <img src="/images/profile/profile-image.png" alt="image">
+                                        <img src="/images/profile/no-photo.jpg" alt="image">
                                     </div>
                                     <div class="content">
-                                        <h4 class="text-sm">Adam Joe</h4>
+                                        <h4 class="text-sm">{{ Auth::user()->name }}</h4>
                                         <a class="text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white text-xs"
-                                            href="#">Email@gmail.com</a>
+                                            href="#">{{ Auth::user()->email }}</a>
                                     </div>
                                 </div>
                             </li>
-                            <li class="divider"></li>
+                            {{-- <li class="divider"></li>
                             <li>
                                 <a href="#0">
                                     <i class="lni lni-user"></i> View Profile
@@ -63,7 +63,7 @@
                             </li>
                             <li>
                                 <a href="#0"> <i class="lni lni-cog"></i> Settings </a>
-                            </li>
+                            </li> --}}
                             <li class="divider"></li>
                             <li>
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
