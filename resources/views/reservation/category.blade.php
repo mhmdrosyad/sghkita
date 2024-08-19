@@ -29,19 +29,19 @@
             <table class="table table-striped" id="categoryTable">
                 <thead>
                     <tr>
-                        <th>#</th>
+                        <th class="text-center">No</th>
                         <th>Nama</th>
                         <th>Note</th>
-                        <th>Actions</th>
+                        <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($categories as $category)
                     <tr>
-                        <td>{{ $loop->iteration }}</td>
+                        <td class="text-center">{{ $loop->iteration }}</td>
                         <td>{{ $category->name }}</td>
                         <td>{{ $category->note }}</td>
-                        <td>
+                        <td class="text-center">
                             <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ $category->id_rescategory }}">Edit</button>
                             <form action="{{ route('res_category.destroy', $category->id_rescategory) }}" method="POST" class="d-inline">
                                 @csrf

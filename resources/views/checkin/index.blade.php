@@ -1,6 +1,17 @@
 <x-app-layout>
     <div class="title-wrapper pt-30">
     </div>
+    @if($upcomingReservations->isNotEmpty())
+    <div class="alert alert-warning">
+        <strong>Reminder:</strong>
+        Berikut adalah reservasi yang akan datang dalam 3 hari ke depan dan belum di-check-in:
+        <ul>
+            @foreach ($upcomingReservations as $reservation)
+            <li>-{{ $reservation->order_code }} - {{ $reservation->customer->name }} - {{ $reservation->customer->agency }} (Check-in: {{ $reservation->checkin->format('Y-m-d H:i') }})</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
     @if (session('success'))
     <div class="alert alert-success">
         {{ session('success') }}
@@ -13,6 +24,7 @@
     </div>
     @endif
 
+    <!-- Reminder for Upcoming Reservations -->
 
     <div class="card mb-4">
         <div class="card-header">
@@ -40,8 +52,8 @@
                             <th>Nama</th>
                             <th>Instansi</th>
                             <th>Tagihan</th>
-                            <th>Check-In</th>
-                            <th>Check-Out</th>
+                            <th class="text-center">Check-In</th>
+                            <th class="text-center">Check-Out</th>
                             <th class="text-center">Status</th>
                         </tr>
                     </thead>
@@ -52,8 +64,8 @@
                             <td>{{ $checkin->guest_name }}</td>
                             <td>{{ $checkin->instansi }}</td>
                             <td>{{ number_format($checkin->total_tagihan, 0, ',', '.') }}</td>
-                            <td>{{ $checkin->checkin_time }}</td>
-                            <td>{{ $checkin->checkout_time }}</td>
+                            <td class="text-center">{{ $checkin->checkin_time }}</td>
+                            <td class="text-center">{{ $checkin->checkout_time }}</td>
                             <td>
                                 <div class="d-flex align-items-center">
                                     @if ($checkin->status === 'checkin')

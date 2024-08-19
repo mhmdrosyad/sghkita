@@ -35,7 +35,7 @@
                                         <th style="width: 15%">Instansi</th>
                                         <th style="width: 15%">No. HP 1</th>
                                         <th style="width: 15%">No. HP 2</th>
-                                        <th style="width: 10%">Action</th>
+                                        <th class="text-center" style="width: 10%">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>

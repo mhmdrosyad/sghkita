@@ -11,10 +11,25 @@ class CheckinController extends Controller
     public function index()
     {
         $checkins = Checkin::with('reservation')->where('status', 'checkin')->get();
-        $activeReservations = Reservation::where('status', 'active')->get();
 
-        return view('checkin.index', compact('checkins', 'activeReservations'));
+        // Ambil kode reservasi yang sudah di-checkin
+        $checkedInReservations = Checkin::pluck('reservation_code')->toArray();
+
+        // Ambil reservasi aktif yang belum di-checkin
+        $activeReservations = Reservation::where('status', 'active')
+            ->whereNotIn('order_code', $checkedInReservations)
+            ->get();
+
+        // Ambil reservasi yang jatuh tempo dalam 3 hari ke depan dan belum di-checkin
+        $upcomingReservations = Reservation::where('checkin', '>=', now()->startOfDay())
+            ->where('checkin', '<=', now()->addDays(3)->endOfDay())
+            ->where('status', 'active')
+            ->whereNotIn('order_code', $checkedInReservations) // Tambahkan kondisi ini
+            ->get();
+
+        return view('checkin.index', compact('checkins', 'activeReservations', 'upcomingReservations'));
     }
+
     public function history()
     {
         // Ambil data check-ins dengan status 'checkout'
