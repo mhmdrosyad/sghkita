@@ -57,24 +57,20 @@
                                 <td>{{ optional($reservation->sales)->name }}</td>
                                 <td>
                                     <div class="d-flex">
-                                        <button class="btn btn-sm btn-primary me-2" data-bs-toggle="modal" data-bs-target="#detailReservationModal{{ $reservation->code_order }}">
+                                        <button class="btn btn-sm btn-primary me-2" data-bs-toggle="modal" data-bs-target="#detailReservationModal{{ $reservation->order_code }}">
                                             <i class="lni lni-eye"></i>
                                         </button>
-                                        <!-- <button class="btn btn-sm btn-warning me-2" data-bs-toggle="modal" data-bs-target="#editReservationModal{{ $reservation->code_order }}">
-                                            <i class="lni lni-pencil"></i>
-                                        </button> -->
-                                        <!-- Assuming $reservation is your reservation model instance -->
                                         <form action="{{ route('reservations.destroy', $reservation->order_code) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger">Delete</button>
                                         </form>
-
                                     </div>
                                 </td>
+
                             </tr>
                             <!-- Detail Reservation Modal -->
-                            <div class="modal fade" id="detailReservationModal{{ $reservation->code_order }}" tabindex="-1" aria-labelledby="detailReservationModalLabel{{ $reservation->code_order }}" aria-hidden="true">
+                            <div class="modal fade" id="detailReservationModal{{ $reservation->order_code }}" tabindex="-1" aria-labelledby="detailReservationModalLabel{{ $reservation->order_code }}" aria-hidden="true">
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -369,7 +365,7 @@
 
 
                             <!-- Edit Reservation Modal -->
-                            <div class="modal fade" id="editReservationModal{{ $reservation->order_code }}" tabindex="-1" aria-labelledby="editReservationModalLabel{{ $reservation->order_code }}" aria-hidden="true">
+                            <!-- <div class="modal fade" id="editReservationModal{{ $reservation->order_code }}" tabindex="-1" aria-labelledby="editReservationModalLabel{{ $reservation->order_code }}" aria-hidden="true">
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
                                         <div class="modal-header border-bottom">
@@ -440,7 +436,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
 
 
                             @endforeach
