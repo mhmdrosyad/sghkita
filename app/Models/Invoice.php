@@ -18,6 +18,7 @@ class Invoice extends Model
         'description',
         'user_id',
         'total_bill',
+        'status',
     ];
 
     public function reservation()

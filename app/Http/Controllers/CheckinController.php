@@ -76,16 +76,32 @@ class CheckinController extends Controller
         ]);
 
         $checkin = Checkin::find($request->checkin_id);
-        $checkin->status = $request->status;
 
         if ($request->status === 'checkout') {
+            // Ambil reservasi terkait dari checkin
+            $reservation = $checkin->reservation;
+
+            // Ambil invoice terkait dari reservasi
+            $invoice = $reservation->invoice;
+
+            // Cek apakah status invoice adalah 'done'
+            if (!$invoice || $invoice->status !== 'done') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Pembayaran belum selesai. Silakan selesaikan pembayaran terlebih dahulu.'
+                ]);
+            }
+
+            // Jika pembayaran sudah selesai, set checkout time
             $checkin->checkout_time = now();
         }
 
+        $checkin->status = $request->status;
         $checkin->save();
 
         return response()->json(['success' => true]);
     }
+
 
     public function getReservationData(Request $request)
     {

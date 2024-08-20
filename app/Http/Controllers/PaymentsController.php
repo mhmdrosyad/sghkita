@@ -7,6 +7,7 @@ use App\Models\Reservation;
 use App\Models\Transaction;
 use App\Models\LedgerEntry;
 use App\Models\Category;
+use App\Models\Invoice;
 use App\Models\Account;
 use App\Models\MonthlyBalance;
 use Illuminate\Http\Request;
@@ -72,8 +73,26 @@ class PaymentsController extends Controller
             $reservation->update(['status' => 'active']);
         }
 
+        // Perbarui status invoice menjadi 'dp' atau 'done'
+        $invoice = Invoice::where('reservation_code', $validated['reservation_code'])->first();
+        if ($invoice) {
+            // Hitung total pembayaran untuk reservasi ini dengan join ke tabel transactions
+            $totalPayments = $invoice->payments()->join('transactions', 'payments.transaction_id', '=', 'transactions.id')
+                ->sum('transactions.nominal');
+
+            if ($totalPayments >= $invoice->total_bill) {
+                // Jika total pembayaran >= total tagihan, perbarui status menjadi 'done'
+                $invoice->update(['status' => 'done']);
+            } else {
+                // Jika belum lunas, status tetap 'dp'
+                $invoice->update(['status' => 'dp']);
+            }
+        }
+
+
         return redirect()->back()->with('success', 'Pembayaran berhasil dicatat.');
     }
+
 
     private function updateAccountBalance($account, $amount, $entryType, $transaction)
     {
