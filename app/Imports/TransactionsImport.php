@@ -95,7 +95,6 @@ class TransactionsImport implements ToModel, WithHeadingRow
                 dd('Failed to create transaction', ['row' => $row]);
             }
 
-
             if ($debetAccount) {
                 try {
                     if ($debetAccount->position == 'asset') {
