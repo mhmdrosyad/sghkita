@@ -101,17 +101,11 @@
                                 stroke-linejoin="round" />
                         </svg>
                     </span>
-                    <span class="text">Group</span>
+                    <span class="text">Booking Group</span>
                 </a>
                 <ul id="ddmenu_5" class="collapse dropdown-nav">
                     <li>
                         <a href="{{ route('reservations.index') }}">Reservation</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('checkins.index') }}">Checkin</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('invoices.index') }}">Invoice</a>
                     </li>
                     <li>
                         <a href="{{ route('customer.index') }}">Customer</a>
@@ -124,11 +118,32 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item nav-item-has-children">
+            <li class="nav-item">
+                <a href="{{ route('checkins.index') }}">
+                    <span class="icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill="currentColor" d="M3 5C3 4.44772 3.44772 4 4 4H20C20.5523 4 21 4.44772 21 5V19C21 19.5523 20.5523 20 20 20H4C3.44772 20 3 19.5523 3 19V5ZM4 6V19H20V6H4ZM16.7071 9.29289C16.3166 8.90237 15.6834 8.90237 15.2929 9.29289L11 13.5858L10.2071 12.7929C9.81658 12.4024 9.18342 12.4024 8.79289 12.7929C8.40237 13.1834 8.40237 13.8166 8.79289 14.2071L10.7929 16.2071C11.1834 16.5976 11.8166 16.5976 12.2071 16.2071L17.2071 11.2071C17.5976 10.8166 17.5976 10.1834 17.2071 9.29289C16.9024 8.90237 16.3166 8.90237 15.7071 9.29289L16.7071 9.29289Z" />
+                        </svg>
+                    </span>
+                    <span class="text">Checkin</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ route('invoices.index') }}">
+                    <span class="icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill="currentColor" d="M19 6.41L18.59 6 13 11.59V16h4.41l5.59-5.59L19 6.41zM11.59 10L9 12.59V14h1.41L14 10.41 11.59 10zM3 21h18v-2H3v2zm0-16V3h8V1H1v18h2V5z" />
+                        </svg>
+                    </span>
+                    <span class="text">Invoice</span>
+                </a>
+            </li>
+
+            <!-- <li class="nav-item nav-item-has-children">
                 <a href="#0" class="collapsed" data-bs-toggle="collapse" data-bs-target="#ddmenu_wig"
                     aria-controls="ddmenu_wig" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="icon">
-                        <!-- Ikon Checkin baru -->
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 2C8.13401 2 5 5.13401 5 9C5 10.073 5.33828 11.0548 5.95283 11.8553L4.28699 13.4334C3.5971 14.1306 3.2068 15.0586 3.2068 16.0374V20.7795H8.31867V16.6184H15.6813V20.7795H20.7932V16.0374C20.7932 15.0586 20.4029 14.1306 19.713 13.4334L18.0472 11.8553C18.6617 11.0548 19 10.073 19 9C19 5.13401 15.866 2 12 2ZM12 4C15.3137 4 18 6.68629 18 10C18 10.8974 17.7033 11.744 17.1762 12.3624L12.8238 6.63757C12.2967 5.91915 11.7003 5.38254 11 5.1218V4.12749L12 4ZM12 14H10V16H12V14ZM12 10H10V12H12V10Z" fill="currentColor" />
                         </svg>
@@ -143,7 +158,7 @@
                         <a href="">Invoice</a>
                     </li>
                 </ul>
-            </li>
+            </li> -->
 
             <!-- <li class="nav-item">
                 <a href="{{ route('invoices.index') }}">
