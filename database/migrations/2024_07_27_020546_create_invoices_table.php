@@ -19,6 +19,7 @@ class CreateInvoicesTable extends Migration
             $table->text('description')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->decimal('total_bill', 10, 2);
+            $table->enum('status', ['done', 'dp', 'unpaid'])->default('unpaid'); // Add this line
             $table->timestamps();
             $table->foreign('reservation_code')->references('order_code')->on('reservations')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
@@ -32,6 +33,11 @@ class CreateInvoicesTable extends Migration
      */
     public function down()
     {
+        Schema::table('invoices', function (Blueprint $table) {
+            $table->dropForeign(['reservation_code']);
+            $table->dropForeign(['user_id']);
+        });
+
         Schema::dropIfExists('invoices');
     }
 }

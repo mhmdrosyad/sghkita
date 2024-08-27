@@ -48,6 +48,10 @@
                         <div class="col-sm-8">: {{ number_format($invoice->reservation->rate * $invoice->reservation->pax, 0, '.', '.') }}</div>
                     </div>
                     <div class="row mb-2">
+                        <div class="col-sm-3"><strong>Payment</strong></div>
+                        <div class="col-sm-8">: {{ $invoice->status}}</div>
+                    </div>
+                    <div class="row mb-2">
                         <div class="col-sm-3"><strong>Sales</strong></div>
                         <div class="col-sm-8">: {{ $invoice->reservation->sales->name }}</div>
                     </div>

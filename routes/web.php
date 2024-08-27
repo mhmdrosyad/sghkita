@@ -12,6 +12,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\PaymentsController;
 use App\Http\Controllers\CheckinController;
+use App\Http\Controllers\WigCheckinController;
 use App\Http\Controllers\InvoiceItemController;
 use Illuminate\Support\Facades\Route;
 
@@ -102,7 +103,7 @@ Route::middleware('auth')->group(function () {
         Route::put('invoices/{invoice}/items/{item}', [InvoiceController::class, 'editItem'])->name('invoice_items.update');
         Route::delete('invoices/{invoice}/items/{item}', [InvoiceController::class, 'deleteItem'])->name('invoice_items.destroy');
     });
-
+    //checkin group
     Route::prefix('checkins')->group(function () {
         Route::get('/', [CheckinController::class, 'index'])->name('checkins.index');
         Route::post('/store', [CheckinController::class, 'store'])->name('checkins.store');
@@ -111,6 +112,13 @@ Route::middleware('auth')->group(function () {
         Route::post('/update-status', [CheckinController::class, 'updateStatus'])->name('checkins.update-status');
         Route::get('history', [CheckinController::class, 'history'])->name('checkins.history');
     });
+
+    //checkin WIG
+    Route::prefix('wigcheckins')->group(function () {
+        Route::get('/', [WigcheckinController::class, 'index'])->name('wigcheckins.index');
+        Route::post('/store', [WigcheckinController::class, 'store'])->name('wigcheckins.store');
+    });
+
 
 
     Route::post('/payments/store', [PaymentsController::class, 'store'])->name('payments.store');

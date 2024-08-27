@@ -24,6 +24,7 @@
                             <th>Nama</th>
                             <th>Total Tagihan</th>
                             <th>Sales</th>
+                            <th>Status</th> <!-- New Column for Status -->
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -60,12 +61,14 @@
                                 @endif
                             </td>
                             <td>
+                                {{ ucfirst($invoice->status) }} <!-- Display the status -->
+                            </td>
+                            <td>
                                 <a href="{{ route('invoices.show', $invoice->id) }}" class="btn btn-sm btn-warning">Detail</a>
                             </td>
                         </tr>
                         @endforeach
                     </tbody>
-
                 </table>
             </div>
         </div>

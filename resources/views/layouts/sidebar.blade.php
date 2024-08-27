@@ -41,6 +41,7 @@
                         <a href="{{ route('transaction.index', ['account' => '102']) }}">BCA</a>
                     </li>
                     <li>
+
                         <a href="{{ route('transaction.index', ['account' => '103']) }}">BCA Payroll</a>
                     </li>
                     <li>
@@ -104,11 +105,11 @@
                                 stroke-linejoin="round" />
                         </svg>
                     </span>
-                    <span class="text">Reservation</span>
+                    <span class="text">Booking Group</span>
                 </a>
                 <ul id="ddmenu_5" class="collapse dropdown-nav">
                     <li>
-                        <a href="{{ route('reservations.index') }}">Reservation List</a>
+                        <a href="{{ route('reservations.index') }}">Reservation</a>
                     </li>
                     <li>
                         <a href="{{ route('customer.index') }}">Customer</a>
@@ -121,11 +122,51 @@
                     </li>
                 </ul>
             </li>
+            <li class="nav-item">
+                <a href="{{ route('checkins.index') }}">
+                    <span class="icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill="currentColor" d="M3 5C3 4.44772 3.44772 4 4 4H20C20.5523 4 21 4.44772 21 5V19C21 19.5523 20.5523 20 20 20H4C3.44772 20 3 19.5523 3 19V5ZM4 6V19H20V6H4ZM16.7071 9.29289C16.3166 8.90237 15.6834 8.90237 15.2929 9.29289L11 13.5858L10.2071 12.7929C9.81658 12.4024 9.18342 12.4024 8.79289 12.7929C8.40237 13.1834 8.40237 13.8166 8.79289 14.2071L10.7929 16.2071C11.1834 16.5976 11.8166 16.5976 12.2071 16.2071L17.2071 11.2071C17.5976 10.8166 17.5976 10.1834 17.2071 9.29289C16.9024 8.90237 16.3166 8.90237 15.7071 9.29289L16.7071 9.29289Z" />
+                        </svg>
+                    </span>
+                    <span class="text">Checkin</span>
+                </a>
+            </li>
 
             <li class="nav-item">
                 <a href="{{ route('invoices.index') }}">
                     <span class="icon">
-                        <!-- Ikon baru untuk Invoice -->
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill="currentColor" d="M19 6.41L18.59 6 13 11.59V16h4.41l5.59-5.59L19 6.41zM11.59 10L9 12.59V14h1.41L14 10.41 11.59 10zM3 21h18v-2H3v2zm0-16V3h8V1H1v18h2V5z" />
+                        </svg>
+                    </span>
+                    <span class="text">Invoice</span>
+                </a>
+            </li>
+
+            <!-- <li class="nav-item nav-item-has-children">
+                <a href="#0" class="collapsed" data-bs-toggle="collapse" data-bs-target="#ddmenu_wig"
+                    aria-controls="ddmenu_wig" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C8.13401 2 5 5.13401 5 9C5 10.073 5.33828 11.0548 5.95283 11.8553L4.28699 13.4334C3.5971 14.1306 3.2068 15.0586 3.2068 16.0374V20.7795H8.31867V16.6184H15.6813V20.7795H20.7932V16.0374C20.7932 15.0586 20.4029 14.1306 19.713 13.4334L18.0472 11.8553C18.6617 11.0548 19 10.073 19 9C19 5.13401 15.866 2 12 2ZM12 4C15.3137 4 18 6.68629 18 10C18 10.8974 17.7033 11.744 17.1762 12.3624L12.8238 6.63757C12.2967 5.91915 11.7003 5.38254 11 5.1218V4.12749L12 4ZM12 14H10V16H12V14ZM12 10H10V12H12V10Z" fill="currentColor" />
+                        </svg>
+                    </span>
+                    <span class="text">WIG</span>
+                </a>
+                <ul id="ddmenu_wig" class="collapse dropdown-nav">
+                    <li>
+                        <a href="{{ route('wigcheckins.index') }}">Checkin</a>
+                    </li>
+                    <li>
+                        <a href="">Invoice</a>
+                    </li>
+                </ul>
+            </li> -->
+
+            <!-- <li class="nav-item">
+                <a href="{{ route('invoices.index') }}">
+                    <span class="icon">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M21 2H7C6.44772 2 6 2.44772 6 3V21C6 21.5523 6.44772 22 7 22H21C21.5523 22 22 21.5523 22 21V3C22 2.44772 21.5523 2 21 2ZM18 4V6H10V4H18ZM18 8V10H10V8H18ZM18 12V14H10V12H18ZM9 19H8V15H9V19Z"
@@ -138,16 +179,24 @@
             <li class="nav-item">
                 <a href="{{ route('checkins.index') }}">
                     <span class="icon">
-                        <!-- Ikon baru untuk Checkin -->
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M20 4H4C2.897 4 2 4.897 2 6V18C2 19.103 2.897 20 4 20H20C21.103 20 22 19.103 22 18V6C22 4.897 21.103 4 20 4ZM20 18H4V6H20V18ZM10 8H14V10H10V8ZM10 12H14V14H10V12ZM10 16H14V18H10V16Z"
-                                fill="currentColor" />
+                            <path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.33-8 4v1h16v-1c0-2.67-5.33-4-8-4zm0-10c1.85 0 3.5.62 4.9 1.67-.41.33-.74.73-1.1 1.1C15.5 6.62 13.85 6 12 6c-1.85 0-3.5.62-4.9 1.67-.41-.33-.74-.73-1.1-1.1C8.5 6.62 10.15 6 12 6zM4 16c0-1.76 3.17-3.34 8-3.34S20 14.24 20 16v1H4v-1z" />
                         </svg>
                     </span>
-                    <span class="text">Checkin</span>
+                    <span class="text">Checkin Group</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="{{ route('checkins.index') }}">
+                    <span class="icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM10 17.27l-5.27-5.27 1.41-1.41L10 14.46l8.87-8.87 1.41 1.41L10 17.27z" />
+                        </svg>
+                    </span>
+                    <span class="text">Checkin WIG</span>
+                </a>
+            </li> -->
+
             <li class="nav-item nav-item-has-children">
                 <a href="#0" class="collapsed" data-bs-toggle="collapse" data-bs-target="#ddmenu_3"
                     aria-controls="ddmenu_3" aria-expanded="false" aria-label="Toggle navigation">

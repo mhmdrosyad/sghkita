@@ -223,7 +223,7 @@
                                     if (data.success) {
                                         location.reload(); // Refresh the page to see the updated status
                                     } else {
-                                        alert(data.message); // Tampilkan pesan error
+                                        alert(data.message); // Tampilkan pesan error jika pembayaran belum selesai
                                     }
                                 })
                                 .catch(error => {
