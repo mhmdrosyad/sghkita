@@ -117,6 +117,7 @@ class TransactionsImport implements ToModel, WithHeadingRow
                         'entry_date' => $transaction->transaction_at,
                         'entry_type' => 'debit',
                         'amount' => $row['nominal'],
+                        'balance' => $debetAccount->current_balance,
                     ]);
                 } catch (Exception $e) {
                     dd('Error creating debit ledger entry: ' . $e->getMessage(), ['transaction_id' => $transaction->id, 'account_code' => $debetAccount->code, 'entry_date' => $transaction->transaction_at, 'amount' => $row['nominal']]);
@@ -144,6 +145,7 @@ class TransactionsImport implements ToModel, WithHeadingRow
                         'entry_date' => $transaction->transaction_at,
                         'entry_type' => 'credit',
                         'amount' => $row['nominal'],
+                        'balance' => $creditAccount->current_balance,
                     ]);
                 } catch (Exception $e) {
                     dd('Error creating credit ledger entry: ' . $e->getMessage(), ['transaction_id' => $transaction->id, 'account_code' => $creditAccount->code, 'entry_date' => $transaction->transaction_at, 'amount' => $row['nominal']]);

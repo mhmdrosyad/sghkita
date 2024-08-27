@@ -16,6 +16,7 @@ class LedgerEntry extends Model
         'entry_date',
         'entry_type',
         'amount',
+        'balance'
     ];
 
     public function transaction()

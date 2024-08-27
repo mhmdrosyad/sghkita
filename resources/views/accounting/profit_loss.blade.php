@@ -6,8 +6,6 @@
                     $period)->translatedFormat('F Y')}}</h2>
             </div>
             <div class="right d-flex gap-2">
-                <button type="button" class="main-btn success-btn btn-hover" data-bs-toggle="modal"
-                    data-bs-target="#importModal"><i class="lni lni-plus"></i>Import Lap. Bulanan</button>
                 <div class="dropdown">
                     <button class="main-btn primary-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
                         aria-expanded="false">
@@ -158,34 +156,6 @@
                     <div class="col">
                         <strong>{{ number_format($totalOutcome, 0, ',', '.') }}</strong>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h6>Import Lap. Bulanan</h6>
-                    <button type="button" class="btn d-flex align-items-center fs-4 text-danger" data-bs-dismiss="modal"
-                        aria-label="Close"><i class="lni lni-cross-circle"></i></button>
-                </div>
-                <div class="modal-body">
-                    <form action="{{ route('accounting.import') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <div class="input-style-1">
-                            <input type="text" name="month" placeholder="MM-YYYY" required>
-                        </div>
-                        <div class="input-style-1">
-                            <label>Upload File Ecel:</label>
-                            <input name="file" type="file" required />
-                        </div>
-                        <div class="col-12 d-flex gap-3">
-                            <button type="reset" class="main-btn warning-btn btn-hover"><i
-                                    class="lni lni-trash-can"></i></button>
-                            <button type="submit" class="main-btn primary-btn btn-hover flex-fill">Upload</button>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>
