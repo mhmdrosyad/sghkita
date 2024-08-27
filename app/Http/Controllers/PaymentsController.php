@@ -111,6 +111,7 @@ class PaymentsController extends Controller
             'entry_date' => $transaction->transaction_at->format('Y-m-d'),
             'entry_type' => $entryType,
             'amount' => $amount,
+            'balance' => $account->current_balance
         ]);
 
         // Perbarui saldo bulanan untuk akun
