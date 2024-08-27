@@ -79,6 +79,7 @@
                                 <th>Jenis Transaksi</th>
                                 <th>Masuk</th>
                                 <th>Keluar</th>
+                                <th>Saldo</th>
                                 <th>Aksi</th>
                                 <th>Nota</th>
                             </tr>
@@ -285,6 +286,10 @@
                     <form action="{{ route('transaction.import') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="input-style-1">
+                            <label>Bulan</label>
+                            <input name="periode" type="text" placeholder="MM-YYYY" required />
+                        </div>
+                        <div class="input-style-1">
                             <label>Upload File Ecel:</label>
                             <input name="file" type="file" required />
                         </div>
@@ -316,7 +321,7 @@
     </div>
     <x-slot name="scripts">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
-        <script language="JavaScript">
+        {{-- <script language="JavaScript">
             Webcam.set({
                 width: 320,
                 height: 240,
@@ -332,7 +337,7 @@
                     document.getElementById('imageInput').value = data_uri;
                 });
             }
-        </script>
+        </script> --}}
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
@@ -365,10 +370,11 @@
                         { data: 'category_name', name: 'transaction.category.name' },
                         { data: 'debit', name: 'debit' },
                         { data: 'credit', name: 'credit' },
+                        { data: 'balance', name: 'balance' },
                         { data: 'action', name: 'action', orderable: false, searchable: false },
                         { data: 'view_image', name: 'view_image' },
                     ],
-                    order: [[0, 'desc']]
+                    // order: [[0, 'desc']]
                 });
 
                 $('#ledgerTable').on('click', '.delete-button', function() {

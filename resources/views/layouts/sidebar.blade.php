@@ -35,13 +35,17 @@
                 </a>
                 <ul id="ddmenu_2" class="collapse dropdown-nav">
                     <li>
-                        <a href="{{ route('transaction.index', ['account' => '101']) }}">Transaksi FO</a>
+                        <a href="{{ route('transaction.index', ['account' => '101']) }}">Front Office</a>
                     </li>
                     <li>
-                        <a href="{{ route('transaction.index', ['account' => '102']) }}">Transaksi BCA</a>
+                        <a href="{{ route('transaction.index', ['account' => '102']) }}">BCA</a>
                     </li>
                     <li>
-                        <a href="{{ route('transaction.index') }}">Transaksi Lainya</a>
+
+                        <a href="{{ route('transaction.index', ['account' => '103']) }}">BCA Payroll</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('transaction.index') }}">Lainya</a>
                     </li>
                 </ul>
             </li>

@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Imports\MonthlyBalanceImport;
 use App\Models\Account;
 use App\Models\MonthlyBalance;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
 
 class AccountingController extends Controller
 {
@@ -30,7 +28,7 @@ class AccountingController extends Controller
 
         foreach ($accounts as $account) {
             $balance = $monthlyBalances->get($account->code);
-            $accountBalance = $balance ? $balance->balance : $account->current_balance;
+            $accountBalance = $balance ? $balance->balance : 0;
 
             if ($account->position == 'asset') {
                 $activaAccounts[] = [
@@ -86,22 +84,5 @@ class AccountingController extends Controller
         }
 
         return view('accounting.profit_loss', compact('periods', 'period', 'incomeAccounts', 'outcomeAccounts', 'totalIncome', 'totalOutcome'));
-    }
-
-    public function import(Request $request)
-    {
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls',
-            'month' => 'required|date_format:m-Y',
-        ]);
-
-        $month = $request->input('month');
-
-        try {
-            Excel::import(new MonthlyBalanceImport($month), $request->file('file'));
-            return redirect()->back()->with('success', 'Accounts imported successfully.');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'There was an error importing the accounts: ' . $e->getMessage());
-        }
     }
 }
