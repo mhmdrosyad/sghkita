@@ -59,6 +59,9 @@ class TransactionController extends Controller
                 ->addColumn('credit', function ($entry) {
                     return $entry->entry_type == 'credit' ? number_format($entry->amount, 0, ',', '.') : '0';
                 })
+                ->addColumn('balance', function ($entry) {
+                    return  number_format($entry->balance, 0, ',', '.') ?? 'N/A';
+                })
                 ->addColumn('action', function ($entry) {
                     return '<div class="action">
                                 <button class="text-danger delete-button" data-id="' . $entry->transaction->id . '">
@@ -82,10 +85,20 @@ class TransactionController extends Controller
         $account = Account::find($accountCode);
         $inCategories = null;
         $outCategories = null;
+        $totalBalance = 0;
 
         $query = LedgerEntry::whereBetween('entry_date', [$startDate, $endDate]);
         if ($account) {
             $ledgerEntries = $query->where('account_code', $accountCode)->get();
+
+            if ($ledgerEntries->isNotEmpty()) {
+                // Ambil saldo dari entri terakhir jika ada entri
+                $lastEntry = $ledgerEntries->sortByDesc('id')->first();
+                $totalBalance = $lastEntry ? $lastEntry->balance : 0;
+            } else {
+                // Jika tidak ada entri, gunakan current_balance dari account
+                $totalBalance = $account->current_balance;
+            }
 
             $inCategories = Category::where(function ($query) use ($accountCode) {
                 $query->whereHas('debitAccount', function ($subQuery) use ($accountCode) {
@@ -100,8 +113,6 @@ class TransactionController extends Controller
 
             $totalDebet = $ledgerEntries->where('entry_type', 'debit')->sum('amount');
             $totalCredit = $ledgerEntries->where('entry_type', 'credit')->sum('amount');
-
-            $totalBalance = $account->current_balance;
         } else {
             $ledgerEntries = $query->whereHas('account', function ($query) {
                 $query->where('position', 'asset')->whereNotIn('code', ['101', '102']);
@@ -180,6 +191,7 @@ class TransactionController extends Controller
                 'entry_date' => $transaction->transaction_at,
                 'entry_type' => 'debit',
                 'amount' => $request->nominal,
+                'balance' => $debetAccount->current_balance,
             ]);
         }
 
@@ -203,6 +215,7 @@ class TransactionController extends Controller
                 'entry_date' => $transaction->transaction_at,
                 'entry_type' => 'credit',
                 'amount' => $request->nominal,
+                'balance' => $creditAccount->current_balance,
             ]);
         }
 
@@ -260,6 +273,23 @@ class TransactionController extends Controller
         ]);
 
         try {
+            $transactionMonth = $request->periode;
+            $accounts = Account::all();
+
+            foreach ($accounts as $account) {
+                $existingMonthlyBalance = MonthlyBalance::where('account_code', $account->code)
+                    ->where('month', $transactionMonth)
+                    ->first();
+
+                if (!$existingMonthlyBalance) {
+                    $newMonthlyBalance = new MonthlyBalance();
+                    $newMonthlyBalance->account_code = $account->code;
+                    $newMonthlyBalance->month = $transactionMonth;
+                    $newMonthlyBalance->balance = $account->current_balance;
+                    $newMonthlyBalance->save();
+                }
+            }
+
             Excel::import(new TransactionsImport, $request->file('file'));
             return redirect()->back()->with('success', 'Accounts imported successfully.');
         } catch (\Exception $e) {

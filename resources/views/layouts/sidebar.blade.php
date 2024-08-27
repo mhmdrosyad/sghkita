@@ -31,7 +31,7 @@
                                 d="M13.125 2.29167L16.0417 5.20834H14.1667C13.5913 5.20834 13.125 4.74197 13.125 4.16667V2.29167Z" />
                         </svg>
                     </span>
-                    <span class="text">Cash Fow</span>
+                    <span class="text">Transaksi</span>
                 </a>
                 <ul id="ddmenu_2" class="collapse dropdown-nav">
                     <li>
@@ -39,6 +39,9 @@
                     </li>
                     <li>
                         <a href="{{ route('transaction.index', ['account' => '102']) }}">BCA</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('transaction.index', ['account' => '103']) }}">BCA Payroll</a>
                     </li>
                     <li>
                         <a href="{{ route('transaction.index') }}">Lainya</a>
