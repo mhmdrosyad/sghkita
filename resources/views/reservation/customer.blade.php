@@ -35,7 +35,7 @@
                                 <tbody>
                                     @foreach ($customersWithReservations as $customer)
                                     <tr>
-                                        <td>{{ $loop->iteration }}</td>
+                                        <td class="text-center">{{ $loop->iteration }}</td>
                                         <td>{{ $customer->name }}</td>
                                         <td>{{ $customer->agency }}</td>
                                         <td>{{ $customer->no_hp }}</td>
@@ -117,7 +117,7 @@
                                 <tbody>
                                     @foreach ($allCustomers as $customer)
                                     <tr>
-                                        <td>{{ $loop->iteration }}</td>
+                                        <td class="text-center">{{ $loop->iteration }}</td>
                                         <td>{{ $customer->name }}</td>
                                         <td>{{ $customer->agency }}</td>
                                         <td>{{ $customer->no_hp }}</td>
