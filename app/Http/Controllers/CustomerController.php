@@ -10,9 +10,15 @@ class CustomerController extends Controller
     // Display a listing of the customers
     public function index()
     {
-        $customers = Customer::all();
-        return view('reservation.customer', compact('customers'));
+        // Ambil customer yang pernah melakukan reservasi
+        $customersWithReservations = Customer::has('reservations')->get();
+
+        // Ambil semua customer
+        $allCustomers = Customer::all();
+
+        return view('reservation.customer', compact('customersWithReservations', 'allCustomers'));
     }
+
 
     // Store a newly created customer in storage
     public function store(Request $request)
