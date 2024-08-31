@@ -86,18 +86,24 @@ class TransactionController extends Controller
         $inCategories = null;
         $outCategories = null;
         $totalBalance = 0;
+        $startingBalance = 0;
 
         $query = LedgerEntry::whereBetween('entry_date', [$startDate, $endDate]);
         if ($account) {
             $ledgerEntries = $query->where('account_code', $accountCode)->get();
 
             if ($ledgerEntries->isNotEmpty()) {
-                // Ambil saldo dari entri terakhir jika ada entri
+                $previousEntry = LedgerEntry::where('account_code', $accountCode)
+                    ->where('entry_date', '<', $startDate)
+                    ->orderBy('entry_date', 'desc')
+                    ->first();
                 $lastEntry = $ledgerEntries->sortByDesc('id')->first();
                 $totalBalance = $lastEntry ? $lastEntry->balance : 0;
+                $startingBalance = $previousEntry ? $previousEntry->balance : $account->initial_balance;
             } else {
                 // Jika tidak ada entri, gunakan current_balance dari account
                 $totalBalance = $account->current_balance;
+                $startingBalance = $account->initial_balance;
             }
 
             $inCategories = Category::where(function ($query) use ($accountCode) {
@@ -137,7 +143,7 @@ class TransactionController extends Controller
         $mutationCategories = Category::where('type', 'mutation')->get();
         $startDateFormatted = Carbon::parse($startDate)->format('Y-m-d');
         $endDateFormatted = Carbon::parse($endDate)->format('Y-m-d');
-        return view('transaction.index', compact('account', 'mutationCategories', 'inCategories', 'outCategories', 'totalBalance', 'startDateFormatted', 'endDateFormatted'));
+        return view('transaction.index', compact('account', 'mutationCategories', 'inCategories', 'outCategories', 'totalBalance', 'startingBalance', 'startDateFormatted', 'endDateFormatted'));
     }
 
     public function store(Request $request)

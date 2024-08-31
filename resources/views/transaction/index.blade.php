@@ -89,8 +89,9 @@
                     </table>
                 </div>
 
-                <div class="mt-3 fs-4 fw-bold d-flex text-danger">
-                    Saldo: {{number_format($totalBalance, 0, ',', '.')}}
+                <div class="mt-3 fs-5 fw-bold d-flex flex-column text-danger">
+                    <div>Saldo Awal: {{number_format($startingBalance, 0, ',', '.')}}</div>
+                    <div>Saldo Akhir: {{number_format($totalBalance, 0, ',', '.')}}</div>
                 </div>
             </div>
         </div>
