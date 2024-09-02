@@ -74,6 +74,7 @@
                     <table id="ledgerTable" class="table striped-table">
                         <thead>
                             <tr>
+                                <th>Id</th>
                                 <th>Waktu</th>
                                 <th>Uraian</th>
                                 <th>Jenis Transaksi</th>
@@ -366,6 +367,7 @@
                         }
                     },
                     columns: [
+                        { data: 'id', name: 'id', visible: false },
                         { data: 'entry_date', name: 'entry_date' },
                         { data: 'description', name: 'transaction.description' },
                         { data: 'category_name', name: 'transaction.category.name' },
@@ -375,7 +377,7 @@
                         { data: 'action', name: 'action', orderable: false, searchable: false },
                         { data: 'view_image', name: 'view_image' },
                     ],
-                    // order: [[0, 'desc']]
+                    order: [[0, 'asc']]
                 });
 
                 $('#ledgerTable').on('click', '.delete-button', function() {

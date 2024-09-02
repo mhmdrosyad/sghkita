@@ -7,6 +7,7 @@
     </div>
     <nav class="sidebar-nav">
         <ul>
+            @if(auth()->user()->can('view dashboard'))
             <li class="nav-item">
                 <a href="{{route('dashboard')}}">
                     <span class="icon">
@@ -20,6 +21,7 @@
                     <span class="text">Dashboard</span>
                 </a>
             </li>
+            @endif
             <li class="nav-item nav-item-has-children">
                 <a href="#0" class="collapsed" data-bs-toggle="collapse" data-bs-target="#ddmenu_2"
                     aria-controls="ddmenu_2" aria-expanded="false" aria-label="Toggle navigation">
@@ -126,7 +128,8 @@
                 <a href="{{ route('checkins.index') }}">
                     <span class="icon">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path fill="currentColor" d="M3 5C3 4.44772 3.44772 4 4 4H20C20.5523 4 21 4.44772 21 5V19C21 19.5523 20.5523 20 20 20H4C3.44772 20 3 19.5523 3 19V5ZM4 6V19H20V6H4ZM16.7071 9.29289C16.3166 8.90237 15.6834 8.90237 15.2929 9.29289L11 13.5858L10.2071 12.7929C9.81658 12.4024 9.18342 12.4024 8.79289 12.7929C8.40237 13.1834 8.40237 13.8166 8.79289 14.2071L10.7929 16.2071C11.1834 16.5976 11.8166 16.5976 12.2071 16.2071L17.2071 11.2071C17.5976 10.8166 17.5976 10.1834 17.2071 9.29289C16.9024 8.90237 16.3166 8.90237 15.7071 9.29289L16.7071 9.29289Z" />
+                            <path fill="currentColor"
+                                d="M3 5C3 4.44772 3.44772 4 4 4H20C20.5523 4 21 4.44772 21 5V19C21 19.5523 20.5523 20 20 20H4C3.44772 20 3 19.5523 3 19V5ZM4 6V19H20V6H4ZM16.7071 9.29289C16.3166 8.90237 15.6834 8.90237 15.2929 9.29289L11 13.5858L10.2071 12.7929C9.81658 12.4024 9.18342 12.4024 8.79289 12.7929C8.40237 13.1834 8.40237 13.8166 8.79289 14.2071L10.7929 16.2071C11.1834 16.5976 11.8166 16.5976 12.2071 16.2071L17.2071 11.2071C17.5976 10.8166 17.5976 10.1834 17.2071 9.29289C16.9024 8.90237 16.3166 8.90237 15.7071 9.29289L16.7071 9.29289Z" />
                         </svg>
                     </span>
                     <span class="text">Checkin</span>
@@ -137,7 +140,8 @@
                 <a href="{{ route('invoices.index') }}">
                     <span class="icon">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path fill="currentColor" d="M19 6.41L18.59 6 13 11.59V16h4.41l5.59-5.59L19 6.41zM11.59 10L9 12.59V14h1.41L14 10.41 11.59 10zM3 21h18v-2H3v2zm0-16V3h8V1H1v18h2V5z" />
+                            <path fill="currentColor"
+                                d="M19 6.41L18.59 6 13 11.59V16h4.41l5.59-5.59L19 6.41zM11.59 10L9 12.59V14h1.41L14 10.41 11.59 10zM3 21h18v-2H3v2zm0-16V3h8V1H1v18h2V5z" />
                         </svg>
                     </span>
                     <span class="text">Invoice</span>

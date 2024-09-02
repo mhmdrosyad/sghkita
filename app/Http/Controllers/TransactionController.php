@@ -47,6 +47,9 @@ class TransactionController extends Controller
 
 
             return DataTables::of($query)
+                ->addColumn('id', function ($entry) {
+                    return $entry->id;
+                })
                 ->addColumn('description', function ($entry) {
                     return $entry->transaction->description ?? 'N/A';
                 })
@@ -93,13 +96,16 @@ class TransactionController extends Controller
             $ledgerEntries = $query->where('account_code', $accountCode)->get();
 
             if ($ledgerEntries->isNotEmpty()) {
-                $previousEntry = LedgerEntry::where('account_code', $accountCode)
-                    ->where('entry_date', '<', $startDate)
-                    ->orderBy('entry_date', 'desc')
-                    ->first();
+                $firstEntry = $ledgerEntries->sortBy('id')->first();
                 $lastEntry = $ledgerEntries->sortByDesc('id')->first();
                 $totalBalance = $lastEntry ? $lastEntry->balance : 0;
-                $startingBalance = $previousEntry ? $previousEntry->balance : $account->initial_balance;
+                $startingBalance = $firstEntry ? $firstEntry->balance : $account->initial_balance;
+
+                if ($firstEntry->entry_type == 'debit') {
+                    $startingBalance -= $firstEntry->amount;
+                } elseif ($firstEntry->entry_type == 'credit') {
+                    $startingBalance += $firstEntry->amount;
+                }
             } else {
                 // Jika tidak ada entri, gunakan current_balance dari account
                 $totalBalance = $account->current_balance;
