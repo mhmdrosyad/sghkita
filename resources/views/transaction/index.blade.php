@@ -13,8 +13,10 @@
                     <div class="right">
                         {{-- <button type="button" class="main-btn secondary-btn btn-hover" data-bs-toggle="modal"
                             data-bs-target="#mutationModal"><i class="lni lni-plus"></i>Mutasi</button> --}}
+                        @if(auth()->user()->can('import'))
                         <button type="button" class="main-btn success-btn btn-hover" data-bs-toggle="modal"
                             data-bs-target="#importModal"><i class="lni lni-upload"></i>Import</button>
+                        @endif
                         <button type="button" class="main-btn primary-btn btn-hover" data-bs-toggle="modal"
                             data-bs-target="#addModal"><i class="lni lni-plus"></i>Transaksi Masuk</button>
                         <button type="button" class="main-btn warning-btn btn-hover" data-bs-toggle="modal"
@@ -81,7 +83,9 @@
                                 <th>Masuk</th>
                                 <th>Keluar</th>
                                 <th>Saldo</th>
+                                @if(auth()->user()->can('edit transaction'))
                                 <th>Aksi</th>
+                                @endif
                                 <th>Nota</th>
                             </tr>
                         </thead>
@@ -187,15 +191,19 @@
                             <label>Nominal</label>
                             <input name="nominal" type="number" autocomplete="off" required />
                         </div>
+
+
                         <div class="select-style-1">
                             <label>Jenis Transaksi</label>
                             <div class="select-position">
-                                <select class="text-capitalize" name="category_code" required>
+                                <select class="text-capitalize selectpicker" name="category_code"
+                                    data-live-search="true" required>
                                     <option value="" disabled selected>Pilih jenis</option>
                                     @if(isset($outCategories))
                                     @foreach($outCategories as $category)
                                     @if($category->type == 'out')
-                                    <option value="{{$category->code}}">{{$category->name}}</option>
+                                    <option data-tokens="{{$category->code}}" value="{{$category->code}}">
+                                        {{$category->name}}</option>
                                     @endif
                                     @endforeach
                                     @endif
@@ -353,6 +361,7 @@
             });
         </script>
 
+        @if(auth()->user()->can('edit transaction'))
         <script>
             $(document).ready(function() {
                 var table = $('#ledgerTable').DataTable({
@@ -366,6 +375,7 @@
                             d.end_date = $('input[name="end_date"]').val();
                         }
                     },
+                    
                     columns: [
                         { data: 'id', name: 'id', visible: false },
                         { data: 'entry_date', name: 'entry_date' },
@@ -429,5 +439,83 @@
                 });
             });
         </script>
+        @else
+        <script>
+            $(document).ready(function() {
+                var table = $('#ledgerTable').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: {
+                        url: "{{ route('transaction.index') }}",
+                        data: function (d) {
+                            d.account = "{{ request('account') }}";
+                            d.start_date = $('input[name="start_date"]').val();
+                            d.end_date = $('input[name="end_date"]').val();
+                        }
+                    },
+                    
+                    columns: [
+                        { data: 'id', name: 'id', visible: false },
+                        { data: 'entry_date', name: 'entry_date' },
+                        { data: 'description', name: 'transaction.description' },
+                        { data: 'category_name', name: 'transaction.category.name' },
+                        { data: 'debit', name: 'debit' },
+                        { data: 'credit', name: 'credit' },
+                        { data: 'balance', name: 'balance' },
+                        { data: 'view_image', name: 'view_image' },
+                    ],
+                    order: [[0, 'asc']]
+                });
+
+                $('#ledgerTable').on('click', '.delete-button', function() {
+                    var id = $(this).data('id');
+                    var url = '/transaction/delete/' + id;
+                    
+                    Swal.fire({
+                        title: 'Apakah anda yakin?',
+                        text: "Kamu tidak bisa mengembalikan data yang hilang!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Ya, tetap hapus!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: url,
+                                type: 'DELETE',
+                                data: {
+                                    _token: '{{ csrf_token() }}'
+                                },
+                                success: function(response) {
+                                    if (response.success) {
+                                        Swal.fire(
+                                            'Deleted!',
+                                            response.success,
+                                            'success'
+                                        )
+                                        table.ajax.reload();
+                                    } else {
+                                        Swal.fire(
+                                            'Error!',
+                                            response.error,
+                                            'error'
+                                        )
+                                    }
+                                },
+                                error: function(xhr) {
+                                    Swal.fire(
+                                        'Error!',
+                                        'An error occurred while deleting the account.',
+                                        'error'
+                                    )
+                                }
+                            });
+                        }
+                    });
+                });
+            });
+        </script>
+        @endif
     </x-slot>
 </x-app-layout>

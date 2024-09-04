@@ -116,12 +116,12 @@ class TransactionController extends Controller
                 $query->whereHas('debitAccount', function ($subQuery) use ($accountCode) {
                     $subQuery->where('code', $accountCode);
                 });
-            })->get();
+            })->orderBy('name', 'asc')->get();
             $outCategories = Category::where(function ($query) use ($accountCode) {
                 $query->whereHas('creditAccount', function ($subQuery) use ($accountCode) {
                     $subQuery->where('code', $accountCode);
                 });
-            })->get();
+            })->orderBy('name', 'asc')->get();
 
             $totalDebet = $ledgerEntries->where('entry_type', 'debit')->sum('amount');
             $totalCredit = $ledgerEntries->where('entry_type', 'credit')->sum('amount');
@@ -134,13 +134,13 @@ class TransactionController extends Controller
                 $query->whereHas('debitAccount', function ($subQuery) {
                     $subQuery->whereNotIn('code', ['101', '102']);
                 });
-            })->get();
+            })->orderBy('name', 'asc')->get();
 
             $outCategories = Category::where(function ($query) {
                 $query->whereHas('creditAccount', function ($subQuery) {
                     $subQuery->whereNotIn('code', ['101', '102']);
                 });
-            })->get();
+            })->orderBy('name', 'asc')->get();
 
             $totalDebet = $ledgerEntries->where('entry_type', 'debit')->sum('amount');
             $totalCredit = $ledgerEntries->where('entry_type', 'credit')->sum('amount');

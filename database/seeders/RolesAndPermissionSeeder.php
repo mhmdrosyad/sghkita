@@ -19,17 +19,19 @@ class RolesAndPermissionSeeder extends Seeder
         // Buat Permissions
         Permission::create(['name' => 'view dashboard']);
         Permission::create(['name' => 'manage users']);
-        Permission::create(['name' => 'view reports']);
-        Permission::create(['name' => 'can import']);
+        Permission::create(['name' => 'view accounting']);
+        Permission::create(['name' => 'import']);
+        Permission::create(['name' => 'edit transaction']);
 
         // Buat Roles dan berikan Permissions
         $roleAdmin = Role::create(['name' => 'admin']);
         $roleAdmin->givePermissionTo('view dashboard');
         $roleAdmin->givePermissionTo('manage users');
-        $roleAdmin->givePermissionTo('view reports');
-        $roleAdmin->givePermissionTo('can import');
+        $roleAdmin->givePermissionTo('view accounting');
+        $roleAdmin->givePermissionTo('import');
+        $roleAdmin->givePermissionTo('edit transaction');
 
-        $roleEditor = Role::create(['name' => 'editor']);
+        $roleEditor = Role::create(['name' => 'fo']);
         $roleEditor->givePermissionTo('view dashboard');
     }
 }
