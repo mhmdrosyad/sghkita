@@ -47,6 +47,9 @@ class TransactionController extends Controller
 
 
             return DataTables::of($query)
+                ->addColumn('id', function ($entry) {
+                    return $entry->id;
+                })
                 ->addColumn('description', function ($entry) {
                     return $entry->transaction->description ?? 'N/A';
                 })
@@ -93,13 +96,16 @@ class TransactionController extends Controller
             $ledgerEntries = $query->where('account_code', $accountCode)->get();
 
             if ($ledgerEntries->isNotEmpty()) {
-                $previousEntry = LedgerEntry::where('account_code', $accountCode)
-                    ->where('entry_date', '<', $startDate)
-                    ->orderBy('entry_date', 'desc')
-                    ->first();
+                $firstEntry = $ledgerEntries->sortBy('id')->first();
                 $lastEntry = $ledgerEntries->sortByDesc('id')->first();
                 $totalBalance = $lastEntry ? $lastEntry->balance : 0;
-                $startingBalance = $previousEntry ? $previousEntry->balance : $account->initial_balance;
+                $startingBalance = $firstEntry ? $firstEntry->balance : $account->initial_balance;
+
+                if ($firstEntry->entry_type == 'debit') {
+                    $startingBalance -= $firstEntry->amount;
+                } elseif ($firstEntry->entry_type == 'credit') {
+                    $startingBalance += $firstEntry->amount;
+                }
             } else {
                 // Jika tidak ada entri, gunakan current_balance dari account
                 $totalBalance = $account->current_balance;
@@ -110,12 +116,12 @@ class TransactionController extends Controller
                 $query->whereHas('debitAccount', function ($subQuery) use ($accountCode) {
                     $subQuery->where('code', $accountCode);
                 });
-            })->get();
+            })->orderBy('name', 'asc')->get();
             $outCategories = Category::where(function ($query) use ($accountCode) {
                 $query->whereHas('creditAccount', function ($subQuery) use ($accountCode) {
                     $subQuery->where('code', $accountCode);
                 });
-            })->get();
+            })->orderBy('name', 'asc')->get();
 
             $totalDebet = $ledgerEntries->where('entry_type', 'debit')->sum('amount');
             $totalCredit = $ledgerEntries->where('entry_type', 'credit')->sum('amount');
@@ -128,13 +134,13 @@ class TransactionController extends Controller
                 $query->whereHas('debitAccount', function ($subQuery) {
                     $subQuery->whereNotIn('code', ['101', '102']);
                 });
-            })->get();
+            })->orderBy('name', 'asc')->get();
 
             $outCategories = Category::where(function ($query) {
                 $query->whereHas('creditAccount', function ($subQuery) {
                     $subQuery->whereNotIn('code', ['101', '102']);
                 });
-            })->get();
+            })->orderBy('name', 'asc')->get();
 
             $totalDebet = $ledgerEntries->where('entry_type', 'debit')->sum('amount');
             $totalCredit = $ledgerEntries->where('entry_type', 'credit')->sum('amount');

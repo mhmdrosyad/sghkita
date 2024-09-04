@@ -12,8 +12,31 @@
         </div>
         <!-- end row -->
     </div>
-    <div class="card">
-        <div class="card-body">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Kas FO</h5>
+                    <p class="fw-bold">Rp. {{number_format($foBalance,0, '.', '.')}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Saldo BCA</h5>
+                    <p class="fw-bold">Rp. {{number_format($bcaBalance,0, '.', '.')}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Saldo BCA Payroll</h5>
+                    <p class="fw-bold">Rp. {{number_format($bcaPayrollBalance,0, '.', '.')}}</p>
+                </div>
+            </div>
         </div>
     </div>
+
 </x-app-layout>

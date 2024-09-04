@@ -26,7 +26,7 @@ class CategoryController extends Controller
 
     public function add()
     {
-        $accounts = Account::all();
+        $accounts = Account::orderBy('name', 'asc')->get();
         return view('category.add', compact('accounts'));
     }
 

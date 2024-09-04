@@ -16,8 +16,6 @@
     <link rel="stylesheet" href="{{asset('css/main.css')}}" />
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.2/css/dataTables.bootstrap5.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
 </head>
 
 <body>
