@@ -116,12 +116,12 @@ class TransactionController extends Controller
                 $query->whereHas('debitAccount', function ($subQuery) use ($accountCode) {
                     $subQuery->where('code', $accountCode);
                 });
-            })->orderBy('name', 'asc')->get();
+            })->orderBy('code', 'asc')->get();
             $outCategories = Category::where(function ($query) use ($accountCode) {
                 $query->whereHas('creditAccount', function ($subQuery) use ($accountCode) {
                     $subQuery->where('code', $accountCode);
                 });
-            })->orderBy('name', 'asc')->get();
+            })->orderBy('code', 'asc')->get();
 
             $totalDebet = $ledgerEntries->where('entry_type', 'debit')->sum('amount');
             $totalCredit = $ledgerEntries->where('entry_type', 'credit')->sum('amount');
@@ -134,19 +134,19 @@ class TransactionController extends Controller
                 $query->whereHas('debitAccount', function ($subQuery) {
                     $subQuery->whereNotIn('code', ['101', '102']);
                 });
-            })->orderBy('name', 'asc')->get();
+            })->orderBy('code', 'asc')->get();
 
             $outCategories = Category::where(function ($query) {
                 $query->whereHas('creditAccount', function ($subQuery) {
                     $subQuery->whereNotIn('code', ['101', '102']);
                 });
-            })->orderBy('name', 'asc')->get();
+            })->orderBy('code', 'asc')->get();
 
             $totalDebet = $ledgerEntries->where('entry_type', 'debit')->sum('amount');
             $totalCredit = $ledgerEntries->where('entry_type', 'credit')->sum('amount');
             $totalBalance = $totalDebet - $totalCredit;
         }
-        $mutationCategories = Category::where('type', 'mutation')->get();
+        $mutationCategories = Category::where('type', 'mutation')->orderBy('code', 'asc')->get();
         $startDateFormatted = Carbon::parse($startDate)->format('Y-m-d');
         $endDateFormatted = Carbon::parse($endDate)->format('Y-m-d');
         return view('transaction.index', compact('account', 'mutationCategories', 'inCategories', 'outCategories', 'totalBalance', 'startingBalance', 'startDateFormatted', 'endDateFormatted'));
@@ -174,14 +174,16 @@ class TransactionController extends Controller
         $creditAccount = $category->creditAccount;
 
         $transaction = $this->transactionModel->create([
-            'transaction_at' => now(),
+            'transaction_at' => $request->tanggal ?? now(),
             'description' => $request->description,
             'category_code' => $request->category_code,
             'nominal' => $request->nominal,
             'user_id' => Auth::id(),
         ]);
 
-        $currentMonth = Carbon::now()->format('m-Y');
+        $currentMonth = $request->tanggal
+            ? Carbon::parse($request->tanggal)->format('m-Y')
+            : Carbon::now()->format('m-Y');
 
         if ($debetAccount) {
             if ($debetAccount->position == 'asset') {

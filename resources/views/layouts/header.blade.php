@@ -1,11 +1,21 @@
-<header class="header">
+<header class="header border-bottom">
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-5 col-md-5 col-6">
                 <div class="header-left d-flex align-items-center">
                     <div class="menu-toggle-btn mr-15">
-                        <button id="menu-toggle" class="main-btn primary-btn btn-hover">
-                            <i class="lni lni-chevron-left me-2"></i> Menu
+                        <button id="menu-toggle" class="btn px-0">
+                            <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"
+                                class="line" viewBox="0 0 24 24" width="24" height="24">
+                                <polyline points="2 17 7 12 2 7" stroke="#0E2045" fill="none" stroke-width="1.25px">
+                                </polyline>
+                                <line x1="8" x2="22" y1="5" y2="5" stroke="#0E2045" fill="none" stroke-width="1.25px">
+                                </line>
+                                <line x1="12" x2="22" y1="12" y2="12" stroke="#0E2045" fill="none"
+                                    stroke-width="1.25px"></line>
+                                <line x1="8" x2="22" y1="19" y2="19" stroke="#0E2045" fill="none" stroke-width="1.25px">
+                                </line>
+                            </svg>
                         </button>
                     </div>
                 </div>
@@ -23,12 +33,12 @@
                                     </div>
                                     <div>
                                         <h6 class="fw-500">{{ Auth::user()->name }}</h6>
-                                        <p>{{ Auth::user()->name }}</p>
+                                        {{-- <p>{{ Auth::user()->name }}</p> --}}
                                     </div>
                                 </div>
                             </div>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profile">
+                        <ul class="dropdown-menu dropdown-menu-end border" aria-labelledby="profile">
                             <li>
                                 <div class="author-info flex items-center !p-1">
                                     <div class="image">
@@ -37,7 +47,7 @@
                                     <div class="content">
                                         <h4 class="text-sm">{{ Auth::user()->name }}</h4>
                                         <a class="text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white text-xs"
-                                            href="#">{{ Auth::user()->email }}</a>
+                                            href="#">{{ Auth::user()->username }}</a>
                                     </div>
                                 </div>
                             </li>

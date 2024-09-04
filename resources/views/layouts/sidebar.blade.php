@@ -13,7 +13,7 @@
                 </svg>
             </button> --}}
             <a href="{{ route('dashboard') }}">
-                <h3 class="fw-bold">Sghkita.</h3>
+                <h3 class="fw-semibold">Sghkita.</h3>
             </a>
             <span class="bg-primary text-white px-2">com</span>
         </div>
@@ -25,10 +25,8 @@
             <li class="nav-item">
                 <a href="{{route('dashboard')}}">
                     <span class="icon">
-                        <?xml version="1.0" encoding="UTF-8"?>
                         <svg id="Graph" width="24px" height="24px" viewBox="0 0 24 24" version="1.1"
                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <title>Iconly/Light-Outline/Graph</title>
                             <g id="Iconly/Light-Outline/Graph" stroke="none" stroke-width="1.5" fill="none"
                                 fill-rule="evenodd">
                                 <g id="Graph" transform="translate(2.000000, 1.000000)" fill="currentColor">
@@ -47,10 +45,8 @@
                 <a href="#0" class="collapsed" data-bs-toggle="collapse" data-bs-target="#ddmenu_2"
                     aria-controls="ddmenu_2" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="icon">
-                        <?xml version="1.0" encoding="UTF-8"?>
                         <svg id="Wallet" width="24px" height="24px" viewBox="0 0 24 24" version="1.1"
                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <title>Iconly/Light-Outline/Wallet</title>
                             <g id="Iconly/Light-Outline/Wallet" stroke="none" stroke-width="1.5" fill="none"
                                 fill-rule="evenodd">
                                 <g id="Wallet" transform="translate(2.000000, 3.000000)" fill="currentColor">
@@ -135,7 +131,6 @@
                     <span class="icon">
                         <svg id="Folder" width="24px" height="24px" viewBox="0 0 24 24" version="1.1"
                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <title>Iconly/Light-Outline/Folder</title>
                             <g id="Iconly/Light-Outline/Folder" stroke="none" stroke-width="1.5" fill="none"
                                 fill-rule="evenodd">
                                 <g id="Folder" transform="translate(2.000000, 2.000000)" fill="currentColor">
@@ -166,10 +161,8 @@
             <li class="nav-item">
                 <a href="{{ route('checkins.index') }}">
                     <span class="icon">
-                        <?xml version="1.0" encoding="UTF-8"?>
                         <svg id="Document" width="24px" height="24px" viewBox="0 0 24 24" version="1.1"
                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <title>Iconly/Light-Outline/Document</title>
                             <g id="Iconly/Light-Outline/Document" stroke="none" stroke-width="1.5" fill="none"
                                 fill-rule="evenodd">
                                 <g id="Document" transform="translate(3.000000, 2.000000)" fill="currentColor">
@@ -187,10 +180,8 @@
             <li class="nav-item">
                 <a href="{{ route('invoices.index') }}">
                     <span class="icon">
-                        <?xml version="1.0" encoding="UTF-8"?>
                         <svg id="Document" width="24px" height="24px" viewBox="0 0 24 24" version="1.1"
                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <title>Iconly/Light-Outline/Document</title>
                             <g id="Iconly/Light-Outline/Document" stroke="none" stroke-width="1.5" fill="none"
                                 fill-rule="evenodd">
                                 <g id="Document" transform="translate(3.000000, 2.000000)" fill="currentColor">
@@ -342,6 +333,7 @@
                     <span class="text">Notifications</span>
                 </a>
             </li> --}}
+
         </ul>
     </nav>
 </aside>
