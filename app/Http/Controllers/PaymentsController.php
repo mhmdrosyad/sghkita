@@ -83,16 +83,17 @@ class PaymentsController extends Controller
             if ($totalPayments >= $invoice->total_bill) {
                 // Jika total pembayaran >= total tagihan, perbarui status menjadi 'done'
                 $invoice->update(['status' => 'done']);
+
+                // Rekam transaksi sebagai Pendapatan Tamu Group
+                $this->recordGuestGroupIncome($invoice);
             } else {
                 // Jika belum lunas, status tetap 'dp'
                 $invoice->update(['status' => 'dp']);
             }
         }
 
-
         return redirect()->back()->with('success', 'Pembayaran berhasil dicatat.');
     }
-
 
     private function updateAccountBalance($account, $amount, $entryType, $transaction)
     {
@@ -138,5 +139,39 @@ class PaymentsController extends Controller
         $monthlyBalance->balance = max($monthlyBalance->balance, 0); // Pastikan saldo tidak negatif
 
         $monthlyBalance->save();
+    }
+
+    private function recordGuestGroupIncome(Invoice $invoice)
+    {
+        // Cari kategori Pendapatan Tamu Group dengan kode 108
+        $category = Category::where('code', '108')->first();
+
+        if (!$category) {
+            // Jika kategori tidak ditemukan, keluar dari fungsi
+            return;
+        }
+
+        // Buat transaksi baru untuk Pendapatan Tamu Group
+        $transaction = Transaction::create([
+            'transaction_at' => now(),
+            'description' => 'Pendapatan Tamu Group untuk Invoice: ' . $invoice->id,
+            'category_code' => $category->code,
+            'nominal' => $invoice->total_bill,
+            'user_id' => Auth::id(),
+        ]);
+
+        // Dapatkan akun debit dan kredit terkait dengan kategori ini
+        $debetAccount = $category->debitAccount;
+        $creditAccount = $category->creditAccount;
+
+        // Update akun debit jika ada
+        if ($debetAccount) {
+            $this->updateAccountBalance($debetAccount, $invoice->total_bill, 'debit', $transaction);
+        }
+
+        // Update akun kredit jika ada
+        if ($creditAccount) {
+            $this->updateAccountBalance($creditAccount, $invoice->total_bill, 'credit', $transaction);
+        }
     }
 }
