@@ -47,7 +47,7 @@
                                     <div class="content">
                                         <h4 class="text-sm">{{ Auth::user()->name }}</h4>
                                         <a class="text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white text-xs"
-                                            href="#">{{ Auth::user()->username }}</a>
+                                            href="{{route('profile.edit')}}">{{ Auth::user()->username }}</a>
                                     </div>
                                 </div>
                             </li>
