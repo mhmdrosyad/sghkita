@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="title-wrapper pt-30 pb-4">
+    <div class="title-wrapper pt-30 mb-5">
         <div class="title d-flex flex-wrap align-items-center justify-content-between mb-3">
             <div class="left">
                 <h2>Laporan Laba Rugi {{\Carbon\Carbon::createFromFormat('m-Y',
@@ -45,24 +45,15 @@
         </div>
         @endif
     </div>
+
     <div class="row">
         <div class="col">
-            <div class="card-style mb-30">
-                <p>
-                    <strong>Total laba rugi: </strong>
-                    <span>{{ number_format($totalIncome - $totalOutcome, 0, ',', '.') }}</span>
-                </p>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <div class="card-style mb-30">
-                <div class="title d-flex flex-wrap align-items-center justify-content-between mb-3">
+            <div class="border-end mb-30">
+                <div class="title d-flex flex-wrap align-items-center justify-content-center mb-3">
                     <div class="left">
-                        <h2>
+                        <h3 class="fw-semibold">
                             Pendapatan
-                        </h2>
+                        </h3>
                     </div>
                     <div class="right">
                     </div>
@@ -108,12 +99,12 @@
             </div>
         </div>
         <div class="col">
-            <div class="card-style mb-30">
-                <div class="title d-flex flex-wrap align-items-center justify-content-between mb-3">
+            <div class="mb-30">
+                <div class="title d-flex flex-wrap align-items-center justify-content-center mb-3">
                     <div class="left">
-                        <h2>
+                        <h3 class="fw-semibold">
                             Beban / Biaya
-                        </h2>
+                        </h3>
                     </div>
                     <div class="right">
                     </div>
@@ -160,7 +151,18 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col">
+            <div class="fs-5 py-4 d-flex justify-content-start align-items-center">
 
+                <span>Total laba rugi: </span>
+                <span class="ms-1 bg-black text-white px-2 py-1 fw-semibold">Rp. {{ number_format($totalIncome -
+                    $totalOutcome, 0, ',',
+                    '.') }}</span>
+
+            </div>
+        </div>
+    </div>
     <x-slot name="scripts">
         <script>
             $(document).ready(function() {

@@ -1,18 +1,18 @@
 /*===========================
 		COMMON css
 ===========================*/
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  font-family: "Plus Jakarta Sans", sans-serif !important;
+  font-family: "Poppins", sans-serif !important;
   font-weight: normal;
   font-style: normal;
   color: #5d657b;
   overflow-x: hidden;
-  background: #f1f5f9;
+  background: #fff;
 }
 
 * {
@@ -402,7 +402,7 @@ h6,
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  padding: 15px 45px;
+  padding: 15px 25px;
   font-weight: 500;
   font-size: 14px;
   line-height: 24px;
@@ -2712,7 +2712,7 @@ h6,
 
 /* ========== header css ========== */
 .header {
-  padding: 22px 0;
+  padding: 10px 0;
   background: #fff;
   position: sticky;
   top: 0;
@@ -2974,8 +2974,8 @@ h6,
 }
 .header .header-right .profile-box .profile-info .info .image {
   border: 1px solid #DFE5EF;
-  width: 46px;
-  height: 46px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   margin-right: 14px;
   position: relative;
@@ -3651,7 +3651,7 @@ h6,
   top: 0;
   left: 0;
   z-index: 999;
-  box-shadow: 0px 0px 30px 0px rgba(200, 208, 216, 0.3);
+  border-right: 1px solid #D8D9E0;
   -webkit-transition: all 0.3s ease-out 0s;
   -moz-transition: all 0.3s ease-out 0s;
   -ms-transition: all 0.3s ease-out 0s;

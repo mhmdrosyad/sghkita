@@ -4,7 +4,7 @@
             <div class="col-md-6 order-last order-md-first">
                 <div class="copyright text-center text-md-start">
                     <p class="text-sm">
-                        Copyright 2024 &copy; Satya Graha Hotel
+                        Copyright 2024 &copy; sghkita.com
                     </p>
                 </div>
             </div>

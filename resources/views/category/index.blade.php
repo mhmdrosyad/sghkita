@@ -3,7 +3,7 @@
     </div>
     <div class="row">
         <div class="col">
-            <div class="card-style mb-30">
+            <div class="mb-30">
                 <div class="title d-flex flex-wrap align-items-center justify-content-between mb-3">
                     <div class="left">
                         <h2>
@@ -11,8 +11,10 @@
                         </h2>
                     </div>
                     <div class="right">
-                        <button type="button" class="main-btn success-btn btn-hover" data-bs-toggle="modal" data-bs-target="#addModal"><i class="lni lni-plus"></i>Import</button>
-                        <a href="{{route('category.add')}}" class="main-btn primary-btn btn-hover"><i class="lni lni-plus"></i>Tambah Jenis Transaksi</a>
+                        <button type="button" class="main-btn success-btn btn-hover" data-bs-toggle="modal"
+                            data-bs-target="#addModal"><i class="lni lni-plus"></i>Import</button>
+                        <a href="{{route('category.add')}}" class="main-btn primary-btn btn-hover"><i
+                                class="lni lni-plus"></i>Tambah Jenis Transaksi</a>
                     </div>
                 </div>
                 @if ($errors->any())
@@ -60,7 +62,7 @@
                         <tbody>
                             @foreach($categories as $category)
                             <tr>
-                                <td>
+                                <td class="text-center">
                                     {{ $category->code }}
                                 </td>
                                 <td>
@@ -89,7 +91,9 @@
                                         <button class="text-danger" onclick="confirmDelete('{{ $category->code }}')">
                                             <i class="lni lni-trash-can"></i>
                                         </button>
-                                        <form id="delete-form-{{ $category->code }}" action="{{ route('category.destroy', $category->code) }}" method="POST" style="display: none;">
+                                        <form id="delete-form-{{ $category->code }}"
+                                            action="{{ route('category.destroy', $category->code) }}" method="POST"
+                                            style="display: none;">
                                             @csrf
                                             @method('DELETE')
                                         </form>
@@ -110,7 +114,8 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h6>Import Kategori</h6>
-                    <button type="button" class="btn d-flex align-items-center fs-4 text-danger" data-bs-dismiss="modal" aria-label="Close"><i class="lni lni-cross-circle"></i></button>
+                    <button type="button" class="btn d-flex align-items-center fs-4 text-danger" data-bs-dismiss="modal"
+                        aria-label="Close"><i class="lni lni-cross-circle"></i></button>
                 </div>
                 <div class="modal-body">
                     <form action="{{ route('category.import') }}" method="POST" enctype="multipart/form-data">
@@ -120,7 +125,8 @@
                             <input name="file" type="file" required />
                         </div>
                         <div class="col-12 d-flex gap-3">
-                            <button type="reset" class="main-btn warning-btn btn-hover"><i class="lni lni-trash-can"></i></button>
+                            <button type="reset" class="main-btn warning-btn btn-hover"><i
+                                    class="lni lni-trash-can"></i></button>
                             <button type="submit" class="main-btn primary-btn btn-hover flex-fill">Upload</button>
                         </div>
                     </form>

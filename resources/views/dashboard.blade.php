@@ -17,7 +17,7 @@
             <div class="card">
                 <div class="card-body">
                     <h5>Kas FO</h5>
-                    <p class="fw-bold">Rp. {{number_format($foBalance,0, '.', '.')}}</p>
+                    <p class="fw-semibold">Rp. {{number_format($foBalance,0, '.', '.')}}</p>
                 </div>
             </div>
         </div>
@@ -25,7 +25,7 @@
             <div class="card">
                 <div class="card-body">
                     <h5>Saldo BCA</h5>
-                    <p class="fw-bold">Rp. {{number_format($bcaBalance,0, '.', '.')}}</p>
+                    <p class="fw-semibold">Rp. {{number_format($bcaBalance,0, '.', '.')}}</p>
                 </div>
             </div>
         </div>
@@ -33,7 +33,7 @@
             <div class="card">
                 <div class="card-body">
                     <h5>Saldo BCA Payroll</h5>
-                    <p class="fw-bold">Rp. {{number_format($bcaPayrollBalance,0, '.', '.')}}</p>
+                    <p class="fw-semibold">Rp. {{number_format($bcaPayrollBalance,0, '.', '.')}}</p>
                 </div>
             </div>
         </div>

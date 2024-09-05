@@ -3,7 +3,7 @@
     </div>
     <div class="row">
         <div class="col">
-            <div class="card-style mb-30">
+            <div class="mb-30">
                 <div class="title d-flex flex-wrap align-items-center justify-content-between mb-3">
                     <div class="left">
                         <h2>
@@ -69,7 +69,7 @@
                         <tbody>
                             @foreach($accounts as $account)
                             <tr>
-                                <td>
+                                <td class="text-center">
                                     {{ $account->code }}
                                 </td>
                                 <td>
