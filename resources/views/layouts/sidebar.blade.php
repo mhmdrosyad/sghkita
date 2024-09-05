@@ -125,6 +125,7 @@
                 </ul>
             </li>
             @endif
+            @if(auth()->user()->can('view accounting'))
             <li class="nav-item nav-item-has-children">
                 <a href="#0" class="collapsed" data-bs-toggle="collapse" data-bs-target="#ddmenu_5"
                     aria-controls="ddmenu_5" aria-expanded="false" aria-label="Toggle navigation">
@@ -176,7 +177,6 @@
                     <span class="text">Checkin</span>
                 </a>
             </li>
-
             <li class="nav-item">
                 <a href="{{ route('invoices.index') }}">
                     <span class="icon">
@@ -195,7 +195,7 @@
                     <span class="text">Invoice</span>
                 </a>
             </li>
-
+            @endif
             <!-- <li class="nav-item nav-item-has-children">
                 <a href="#0" class="collapsed" data-bs-toggle="collapse" data-bs-target="#ddmenu_wig"
                     aria-controls="ddmenu_wig" aria-expanded="false" aria-label="Toggle navigation">

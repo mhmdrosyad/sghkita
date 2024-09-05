@@ -157,7 +157,7 @@ class TransactionController extends Controller
         $request->validate([
             'description' => 'required|string|max:255',
             'category_code' => 'required|exists:categories,code',
-            'nominal' => 'required|numeric|min:0',
+            'nominal' => 'required',
         ]);
 
         $category = Category::where('code', $request->category_code)->first();
@@ -173,11 +173,13 @@ class TransactionController extends Controller
         $debetAccount = $category->debitAccount;
         $creditAccount = $category->creditAccount;
 
+        $nominal = str_replace('.', '', $request->nominal);
+
         $transaction = $this->transactionModel->create([
             'transaction_at' => $request->tanggal ?? now(),
             'description' => $request->description,
             'category_code' => $request->category_code,
-            'nominal' => $request->nominal,
+            'nominal' => $nominal,
             'user_id' => Auth::id(),
         ]);
 
@@ -185,17 +187,32 @@ class TransactionController extends Controller
             ? Carbon::parse($request->tanggal)->format('m-Y')
             : Carbon::now()->format('m-Y');
 
+        $accounts = Account::all();
+        foreach ($accounts as $account) {
+            $existingMonthlyBalance = MonthlyBalance::where('account_code', $account->code)
+                ->where('month', $currentMonth)
+                ->first();
+
+            if (!$existingMonthlyBalance) {
+                $newMonthlyBalance = new MonthlyBalance();
+                $newMonthlyBalance->account_code = $account->code;
+                $newMonthlyBalance->month = $currentMonth;
+                $newMonthlyBalance->balance = $account->current_balance;
+                $newMonthlyBalance->save();
+            }
+        }
+
         if ($debetAccount) {
             if ($debetAccount->position == 'asset') {
-                $debetAccount->current_balance += $request->nominal;
-                $this->updateMonthlyBalance($debetAccount, $currentMonth, $request->nominal);
+                $debetAccount->current_balance += $nominal;
+                $this->updateMonthlyBalance($debetAccount, $currentMonth, $nominal);
             } elseif ($debetAccount->position == 'liability') {
-                $debetAccount->current_balance -= $request->nominal;
-                $this->updateMonthlyBalance($debetAccount, $currentMonth, -$request->nominal);
+                $debetAccount->current_balance -= $nominal;
+                $this->updateMonthlyBalance($debetAccount, $currentMonth, -$nominal);
             } else {
-                $debetAccount->current_balance += $request->nominal;
-                $this->updateMonthlyBalance($debetAccount, $currentMonth, $request->nominal);
-                $this->updateRevenueAccount($request->nominal, $debetAccount->position, $currentMonth);
+                $debetAccount->current_balance += $nominal;
+                $this->updateMonthlyBalance($debetAccount, $currentMonth, $nominal);
+                $this->updateRevenueAccount($nominal, $debetAccount->position, $currentMonth);
             }
             $debetAccount->save();
 
@@ -204,22 +221,22 @@ class TransactionController extends Controller
                 'account_code' => $debetAccount->code,
                 'entry_date' => $transaction->transaction_at,
                 'entry_type' => 'debit',
-                'amount' => $request->nominal,
+                'amount' => $nominal,
                 'balance' => $debetAccount->current_balance,
             ]);
         }
 
         if ($creditAccount) {
             if ($creditAccount->position == 'asset') {
-                $creditAccount->current_balance -= $request->nominal;
-                $this->updateMonthlyBalance($creditAccount, $currentMonth, -$request->nominal);
+                $creditAccount->current_balance -= $nominal;
+                $this->updateMonthlyBalance($creditAccount, $currentMonth, -$nominal);
             } elseif ($creditAccount->position == 'liability') {
-                $creditAccount->current_balance += $request->nominal;
-                $this->updateMonthlyBalance($creditAccount, $currentMonth, $request->nominal);
+                $creditAccount->current_balance += $nominal;
+                $this->updateMonthlyBalance($creditAccount, $currentMonth, $nominal);
             } else {
-                $creditAccount->current_balance += $request->nominal;
-                $this->updateMonthlyBalance($creditAccount, $currentMonth, $request->nominal);
-                $this->updateRevenueAccount($request->nominal, $creditAccount->position, $currentMonth);
+                $creditAccount->current_balance += $nominal;
+                $this->updateMonthlyBalance($creditAccount, $currentMonth, $nominal);
+                $this->updateRevenueAccount($nominal, $creditAccount->position, $currentMonth);
             }
             $creditAccount->save();
 
@@ -228,7 +245,7 @@ class TransactionController extends Controller
                 'account_code' => $creditAccount->code,
                 'entry_date' => $transaction->transaction_at,
                 'entry_type' => 'credit',
-                'amount' => $request->nominal,
+                'amount' => $nominal,
                 'balance' => $creditAccount->current_balance,
             ]);
         }
