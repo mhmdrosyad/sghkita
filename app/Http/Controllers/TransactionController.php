@@ -166,9 +166,9 @@ class TransactionController extends Controller
             return redirect()->back()->withErrors(['category_code' => 'Invalid category code.']);
         }
 
-        if ($category->type === 'out' && !$request->filled('image')) {
-            return redirect()->back()->withErrors(['image' => 'Foto nota wajib diisi untuk kategori ini.']);
-        }
+        // if ($category->type === 'out' && !$request->filled('image')) {
+        //     return redirect()->back()->withErrors(['image' => 'Foto nota wajib diisi untuk kategori ini.']);
+        // }
 
         $debetAccount = $category->debitAccount;
         $creditAccount = $category->creditAccount;
