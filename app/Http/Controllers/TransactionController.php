@@ -41,7 +41,7 @@ class TransactionController extends Controller
                 $query->where('account_code', $accountCode);
             } else {
                 $query->whereHas('account', function ($query) {
-                    $query->where('position', 'asset')->whereNotIn('code', ['101', '102']);
+                    $query->where('position', 'asset')->whereNotIn('code', ['101', '102', '103']);
                 });
             }
 

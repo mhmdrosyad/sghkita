@@ -132,7 +132,7 @@
         <div class="col">
             <div class="fs-5 py-4 d-flex justify-content-start align-items-center">
 
-                <span>Selisih Aktiva Pasiva: </span>
+                <span>Selisih Aktiva-Passiva: </span>
                 <span
                     class="ms-1 text-white px-2 py-1 fw-semibold {{$totalActiva-$totalPassiva == 0 ? 'bg-success' : 'bg-danger'}}">Rp.
                     {{ number_format($totalActiva -
