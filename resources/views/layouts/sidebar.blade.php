@@ -146,10 +146,10 @@
                 </a>
                 <ul id="ddmenu_5" class="collapse dropdown-nav">
                     <li>
-                        <a href="{{ route('reservations.index') }}">Reservasi</a>
+                        <a href="{{ route('customer.index') }}">Customer</a>
                     </li>
                     <li>
-                        <a href="{{ route('customer.index') }}">Customer</a>
+                        <a href="{{ route('reservations.index') }}">Reservasi</a>
                     </li>
                     <li>
                         <a href="{{ route('sales.index') }}">Sales</a>

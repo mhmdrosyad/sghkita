@@ -61,7 +61,17 @@
                                 @endif
                             </td>
                             <td>
-                                {{ ucfirst($invoice->status) }} <!-- Display the status -->
+                                <span class="badge 
+                                    @if($invoice->status == 'done')
+                                        bg-success
+                                    @elseif($invoice->status == 'dp')
+                                        bg-primary text-white
+                                    @else
+                                        bg-secondary text-white
+                                    @endif
+                                    ">
+                                    {{ ucfirst($invoice->status) }}
+                                </span>
                             </td>
                             <td>
                                 <a href="{{ route('invoices.show', $invoice->id) }}" class="btn btn-sm btn-warning">Detail</a>
