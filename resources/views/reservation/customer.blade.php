@@ -111,6 +111,7 @@
                                         <th style="width: 15%">Instansi</th>
                                         <th style="width: 15%">No. HP 1</th>
                                         <th style="width: 15%">No. HP 2</th>
+                                        <th style="width: 15%">Status</th>
                                         <th class="text-center" style="width: 10%">Action</th>
                                     </tr>
                                 </thead>
@@ -123,6 +124,17 @@
                                         <td>{{ $customer->no_hp }}</td>
                                         <td>{{ $customer->no_hp_alt }}</td>
                                         <td>
+                                            <span class="badge 
+                                                @if($customer->status == 'Customer Aktif')
+                                                    bg-success
+                                                @elseif($customer->status == 'Calon Customer')
+                                                    bg-warning text-dark
+                                                @endif
+                                                ">
+                                                {{ $customer->status }}
+                                            </span>
+                                        </td>
+                                        <td>
                                             <div class="d-flex">
                                                 <button class="btn btn-sm btn-warning me-2" data-bs-toggle="modal" data-bs-target="#editCustomerModal{{ $customer->id }}"><i class="lni lni-pencil"></i></button>
                                                 <form action="{{ route('customer.destroy', $customer->id) }}" method="POST">
@@ -133,7 +145,6 @@
                                             </div>
                                         </td>
                                     </tr>
-
                                     <!-- Modal Edit Customer -->
                                     <div class="modal fade" id="editCustomerModal{{ $customer->id }}" tabindex="-1" aria-labelledby="editCustomerModalLabel{{ $customer->id }}" aria-hidden="true">
                                         <div class="modal-dialog">

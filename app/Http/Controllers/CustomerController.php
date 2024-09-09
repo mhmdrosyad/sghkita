@@ -11,14 +11,17 @@ class CustomerController extends Controller
     public function index()
     {
         // Ambil customer yang pernah melakukan reservasi
-        $customersWithReservations = Customer::has('reservations')->get();
+        $customersWithReservations = Customer::with('reservations')->has('reservations')->get();
 
-        // Ambil semua customer
-        $allCustomers = Customer::all();
+        // Ambil semua customer dan tambahkan status
+        $allCustomers = Customer::all()->map(function ($customer) {
+            // Tambahkan status berdasarkan apakah customer memiliki reservasi
+            $customer->status = $customer->reservations->isEmpty() ? 'Calon Customer' : 'Customer Aktif';
+            return $customer;
+        });
 
         return view('reservation.customer', compact('customersWithReservations', 'allCustomers'));
     }
-
 
     // Store a newly created customer in storage
     public function store(Request $request)
