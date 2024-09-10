@@ -11,10 +11,12 @@
                         </h2>
                     </div>
                     <div class="right">
+                        @if(auth()->user()->can('editor'))
                         <button type="button" class="main-btn success-btn btn-hover" data-bs-toggle="modal"
                             data-bs-target="#addModal"><i class="lni lni-plus"></i>Import</button>
                         <a href="{{route('category.add')}}" class="main-btn primary-btn btn-hover"><i
                                 class="lni lni-plus"></i>Tambah Jenis Transaksi</a>
+                        @endif
                     </div>
                 </div>
                 @if ($errors->any())

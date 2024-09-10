@@ -148,9 +148,11 @@
                     <li>
                         <a href="{{ route('customer.index') }}">Customer</a>
                     </li>
+                    @if(auth()->user()->can('view reservation'))
                     <li>
                         <a href="{{ route('reservations.index') }}">Reservasi</a>
                     </li>
+                    @endif
                     <li>
                         <a href="{{ route('sales.index') }}">Sales</a>
                     </li>

@@ -52,8 +52,32 @@ class UserSeeder extends Seeder
             'password' => Hash::make('romi1234')
         ]);
 
+        $testing = User::create([
+            'name' => 'testing',
+            'username' => 'testing',
+            'email' => 'testing@example.com',
+            'password' => Hash::make('testing1234')
+        ]);
+
+        $manager = User::create([
+            'name' => 'Manager',
+            'username' => 'manager',
+            'email' => 'manager@example.com',
+            'password' => Hash::make('manager1234')
+        ]);
+
         $etik->assignRole('fo');
         $angger->assignRole('fo');
         $romi->assignRole('fo');
+        $testing->assignRole('fo');
+        $manager->assignRole('manager');
+
+        $owner = User::create([
+            'name' => 'Owner',
+            'username' => 'owner',
+            'email' => 'owner@example.com',
+            'password' => Hash::make('owner1234')
+        ]);
+        $owner->assignRole('owner');
     }
 }

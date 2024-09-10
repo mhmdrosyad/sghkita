@@ -7,7 +7,7 @@ use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
-class RolesAndPermissionSeeder extends Seeder
+class RoleSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -22,6 +22,8 @@ class RolesAndPermissionSeeder extends Seeder
         Permission::create(['name' => 'view accounting']);
         Permission::create(['name' => 'import']);
         Permission::create(['name' => 'edit transaction']);
+        Permission::create(['name' => 'editor']);
+        Permission::create(['name' => 'view reservation']);
 
         // Buat Roles dan berikan Permissions
         $roleAdmin = Role::create(['name' => 'admin']);
@@ -30,8 +32,21 @@ class RolesAndPermissionSeeder extends Seeder
         $roleAdmin->givePermissionTo('view accounting');
         $roleAdmin->givePermissionTo('import');
         $roleAdmin->givePermissionTo('edit transaction');
+        $roleAdmin->givePermissionTo('editor');
+        $roleAdmin->givePermissionTo('view reservation');
 
         $roleEditor = Role::create(['name' => 'fo']);
         $roleEditor->givePermissionTo('view dashboard');
+        $roleEditor->givePermissionTo('editor');
+        $roleEditor->givePermissionTo('view reservation');
+
+        $roleManager = Role::create(['name' => 'manager']);
+        $roleManager->givePermissionTo('view dashboard');
+        $roleManager->givePermissionTo('view accounting');
+        $roleManager->givePermissionTo('view reservation');
+
+        $roleOwner = Role::create(['name' => 'owner']);
+        $roleOwner->givePermissionTo('view dashboard');
+        $roleOwner->givePermissionTo('view accounting');
     }
 }
