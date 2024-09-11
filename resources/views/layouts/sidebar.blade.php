@@ -126,6 +126,7 @@
             </li>
             @endif
             @if(auth()->user()->can('view accounting'))
+            @if(auth()->user()->can('view reservation'))
             <li class="nav-item nav-item-has-children">
                 <a href="#0" class="collapsed" data-bs-toggle="collapse" data-bs-target="#ddmenu_5"
                     aria-controls="ddmenu_5" aria-expanded="false" aria-label="Toggle navigation">
@@ -148,11 +149,9 @@
                     <li>
                         <a href="{{ route('customer.index') }}">Customer</a>
                     </li>
-                    @if(auth()->user()->can('view reservation'))
                     <li>
                         <a href="{{ route('reservations.index') }}">Reservasi</a>
                     </li>
-                    @endif
                     <li>
                         <a href="{{ route('sales.index') }}">Sales</a>
                     </li>
@@ -197,6 +196,7 @@
                     <span class="text">Invoice</span>
                 </a>
             </li>
+            @endif
             @endif
             <!-- <li class="nav-item nav-item-has-children">
                 <a href="#0" class="collapsed" data-bs-toggle="collapse" data-bs-target="#ddmenu_wig"
