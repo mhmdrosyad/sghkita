@@ -8,11 +8,14 @@
         @endif
 
         <div class="card">
-            <div class="card-header text-center">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h3>
-                    Invoice Code : <strong class="text-primary">{{ $invoice->reservation->order_code }}</strong> |
+                    Invoice Code: <strong class="text-primary">{{ $invoice->reservation->order_code }}</strong> |
                     {{ $invoice->reservation->customer->agency }}
                 </h3>
+                <a href="{{ route('invoices.pdf', $invoice->id) }}" class="btn btn-success">
+                    <i class="lni lni-printer"></i> Cetak PDF
+                </a>
             </div>
 
 

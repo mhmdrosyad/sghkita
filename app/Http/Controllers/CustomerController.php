@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\CustomerImport;
+
 
 class CustomerController extends Controller
 {
@@ -56,5 +59,16 @@ class CustomerController extends Controller
     {
         $customer->delete();
         return redirect()->back()->with('success', 'Customer deleted successfully.');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        Excel::import(new CustomerImport, $request->file('file')->store('temp'));
+
+        return redirect()->back()->with('success', 'Data Customer berhasil diimport!');
     }
 }

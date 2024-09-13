@@ -458,15 +458,21 @@
                 <div class="modal-body">
                     <form action="{{ route('reservations.store') }}" method="POST">
                         @csrf
+                        <!-- Form fields as before -->
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="customer_id" class="form-label">Customer</label>
-                                <select name="customer_id" id="customer_id" class="form-select" required>
-                                    <option value="" selected disabled>Select Customer</option>
-                                    @foreach($customers as $customer)
-                                    <option value="{{ $customer->id }}">{{ $customer->name }} ({{ $customer->agency }})</option>
-                                    @endforeach
-                                </select>
+                                <div class="input-group">
+                                    <select name="customer_id" id="customer_id" class="form-select" required>
+                                        <option value="" selected disabled>Select Customer</option>
+                                        @foreach($customers as $customer)
+                                        <option value="{{ $customer->id }}">{{ $customer->name }} ({{ $customer->agency }})</option>
+                                        @endforeach
+                                    </select>
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#customerListModal">
+                                        Select Customer
+                                    </button>
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <label for="res_category_id" class="form-label">Reservation Type</label>
@@ -517,20 +523,86 @@
         </div>
     </div>
 
+
+    <!-- Modal Data Customer -->
+    <div class="modal fade" id="customerListModal" tabindex="-1" aria-labelledby="customerListModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customerListModalLabel">Customer List</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table id="customerTable" class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Agency</th>
+                                <th>Phone</th>
+                                <th>Select</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($customers as $customer)
+                            <tr>
+                                <td>{{ $customer->name }}</td>
+                                <td>{{ $customer->agency }}</td>
+                                <td>{{ $customer->no_hp }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary select-customer" data-id="{{ $customer->id }}" data-name="{{ $customer->name }}">
+                                        Select
+                                    </button>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <x-slot name="scripts">
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+                // Inisialisasi DataTable untuk tabel reservasi
                 $('#reservationTableActive, #reservationTableWaiting').DataTable();
 
-                document.querySelectorAll('.delete-reservation').forEach(button => {
+                // Inisialisasi DataTable untuk tabel customer
+                $('#customerTable').DataTable();
+
+                // Event listener untuk tombol 'Select' di tabel customer
+                document.querySelectorAll('.select-customer').forEach(button => {
                     button.addEventListener('click', function() {
-                        const reservationId = this.getAttribute('data-reservation-id');
-                        if (confirm('Are you sure you want to delete this reservation?')) {
-                            document.getElementById(`delete-form-${reservationId}`).submit();
+                        const customerId = this.getAttribute('data-id');
+                        const customerName = this.getAttribute('data-name');
+
+                        // Set nilai dropdown customer_id dengan id dan nama yang dipilih
+                        const customerSelect = document.getElementById('customer_id');
+                        customerSelect.value = customerId;
+
+                        // Update teks di option yang dipilih (bukan hanya id)
+                        const selectedOption = customerSelect.querySelector(`option[value="${customerId}"]`);
+                        if (selectedOption) {
+                            selectedOption.text = customerName;
                         }
+
+                        // Tutup modal customer
+                        const customerModal = document.getElementById('customerListModal');
+                        const modalCustomer = bootstrap.Modal.getInstance(customerModal);
+                        modalCustomer.hide();
+
+                        // Buka kembali modal reservasi setelah modal customer ditutup
+                        modalCustomer._element.addEventListener('hidden.bs.modal', function() {
+                            const reservationModal = new bootstrap.Modal(document.getElementById('addReservationModal'));
+                            reservationModal.show(); // Buka kembali modal reservasi
+                        }, {
+                            once: true
+                        }); // Pastikan event listener hanya berjalan sekali
                     });
                 });
             });
         </script>
     </x-slot>
+
 </x-app-layout>
