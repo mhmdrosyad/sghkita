@@ -3,9 +3,52 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <!-- Tombol Tambah Data Customer -->
                 <div class="d-flex justify-content-end mb-3">
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomerModal">Tambah Data Customer</button>
+                    <!-- Tombol Import Data Customer -->
+                    <button class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#importCustomerModal">
+                        <!-- SVG untuk ikon download -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+                            <path d="M8 0a.5.5 0 0 1 .5.5V9.707L12.854 5.854a.5.5 0 1 1 .707.707L8.707 10.5a.5.5 0 0 1-.707 0L4.439 6.561a.5.5 0 1 1 .707-.707L8 9.707V.5A.5.5 0 0 1 8 0z" />
+                            <path d="M0 13.5a.5.5 0 0 1 .5-.5h15a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H.5a.5.5 0 0 1-.5-.5v-1z" />
+                        </svg>
+                        Import
+                    </button>
+
+                    <!-- Tombol Tambah Data Customer -->
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+                        <!-- SVG untuk ikon tambah pengguna -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-plus" viewBox="0 0 16 16">
+                            <path d="M14 15v-1a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v1H1v1h1v1h1v-1h10v1h1v-1h1v-1h-1z" />
+                            <path d="M8 8a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm-2 6a5.978 5.978 0 0 1-3.5-1.035A5.978 5.978 0 0 1 0 11c0-2.486 2.014-4.5 4.5-4.5S9 8.514 9 11a5.978 5.978 0 0 1-3 1z" />
+                            <path d="M14.5 8a.5.5 0 0 1-.5-.5V5.707L11.854 8.854a.5.5 0 0 1-.707-.707L13.293 5.5H10a.5.5 0 0 1-.5-.5V4a.5.5 0 0 1 .5-.5h3.293L11.146.854a.5.5 0 0 1 .707-.707L15 3.293V0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3.293L15.146 2.854a.5.5 0 0 1-.707.707L12.707 1.5H14a.5.5 0 0 1 .5.5v2.707L14.854 6.854a.5.5 0 0 1-.707.707L12.293 5.5H15a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5z" />
+                        </svg>
+                        Tambah
+                    </button>
+                </div>
+
+                <!-- Modal Import Customer -->
+                <div class="modal fade" id="importCustomerModal" tabindex="-1" aria-labelledby="importCustomerModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="importCustomerModalLabel">Import Data Customer</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{{ route('customer.import') }}" method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    <div class="mb-3">
+                                        <label for="file" class="form-label">Pilih File Excel</label>
+                                        <input class="form-control" type="file" name="file" required>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                        <button type="submit" class="btn btn-success">Import</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Tabel Customer dengan Reservasi -->

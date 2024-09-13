@@ -67,6 +67,7 @@ Route::middleware('auth')->group(function () {
         Route::post('store', [CustomerController::class, 'store'])->name('customer.store');
         Route::put('update/{customer}', [CustomerController::class, 'update'])->name('customer.update');
         Route::delete('delete/{customer}', [CustomerController::class, 'destroy'])->name('customer.destroy');
+        Route::post('import', [CustomerController::class, 'import'])->name('customer.import');
     });
 
     // Sales routes
@@ -102,6 +103,7 @@ Route::middleware('auth')->group(function () {
         Route::post('items/add/{id}', [InvoiceController::class, 'addItem'])->name('invoice_items.add');
         Route::put('invoices/{invoice}/items/{item}', [InvoiceController::class, 'editItem'])->name('invoice_items.update');
         Route::delete('invoices/{invoice}/items/{item}', [InvoiceController::class, 'deleteItem'])->name('invoice_items.destroy');
+        Route::get('invoices/{invoice}/pdf', [InvoiceController::class, 'generatePDF'])->name('invoices.pdf');
     });
     //checkin group
     Route::prefix('checkins')->group(function () {

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class InvoiceController extends Controller
 {
@@ -127,5 +129,20 @@ class InvoiceController extends Controller
         // Redirect ke halaman invoice dengan pesan sukses
         return redirect()->route('invoices.show', $invoice->id)
             ->with('success', 'Item berhasil dihapus.');
+    }
+
+    public function generatePDF(Invoice $invoice)
+    {
+        // Ambil data invoice seperti di tampilan biasa
+        $data = [
+            'invoice' => $invoice,
+            // Data tambahan jika diperlukan
+        ];
+
+        // Load tampilan Blade dan buat PDF
+        $pdf = Pdf::loadView('invoices.pdf', $data);
+
+        // Kembalikan respon download PDF
+        return $pdf->download('invoice_' . $invoice->reservation->order_code . '.pdf');
     }
 }
