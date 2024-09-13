@@ -7,7 +7,7 @@
                 <div class="title d-flex flex-wrap align-items-center justify-content-between mb-3">
                     <div class="left">
                         <h2>
-                            Cash Flow @isset($account) {{ $account->name }} @endisset
+                            Transaksi @isset($account) {{ $account->name }} @endisset
                         </h2>
                     </div>
                     <div class="right">
@@ -26,7 +26,7 @@
                                     fill="#ffffff" />
                             </svg></button>
                         @endif
-                        <button type="button" class="main-btn bg-black text-white btn-hover" data-bs-toggle="modal"
+                        {{-- <button type="button" class="main-btn bg-black text-white btn-hover" data-bs-toggle="modal"
                             data-bs-target="#mutationModal">
                             <svg id="Swap" width="24px" height="24px" viewBox="0 0 24 24" version="1.1"
                                 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -39,7 +39,11 @@
                                             id="Combined-Shape"></path>
                                     </g>
                                 </g>
-                            </svg></i>Mutasi</button>
+                            </svg></i>Mutasi</button> --}}
+                        @if(auth()->user()->can('editor'))
+                        @if((Auth::user()->hasRole('fo') && request('account') == 101) ||
+                        (!Auth::user()->hasRole('fo')))
+
                         <button type="button" class="main-btn primary-btn btn-hover" data-bs-toggle="modal"
                             data-bs-target="#addModal">
                             <svg id="Paper Download" width="24px" height="24px" viewBox="0 0 24 24" version="1.1"
@@ -75,7 +79,8 @@
                                 </g>
                             </svg>Transaksi Keluar
                         </button>
-
+                        @endif
+                        @endif
                     </div>
                 </div>
 
@@ -215,7 +220,7 @@
                                     <option value="" disabled selected>Pilih jenis</option>
                                     @if(isset($inCategories))
                                     @foreach($inCategories as $category)
-                                    @if($category->type == 'in')
+                                    @if($category->type == 'in' || $category->type == 'mutation')
                                     <option value="{{$category->code}}">{{$category->code}} - {{$category->name}}
                                     </option>
                                     @endif
@@ -283,7 +288,7 @@
                                     <option value="" disabled selected>Pilih jenis</option>
                                     @if(isset($outCategories))
                                     @foreach($outCategories as $category)
-                                    @if($category->type == 'out')
+                                    @if($category->type == 'out' || $category->type == 'mutation')
                                     <option data-tokens="{{$category->code}}" value="{{$category->code}}">
                                         {{$category->code}} - {{$category->name}}</option>
                                     @endif

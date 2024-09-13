@@ -11,6 +11,7 @@
                         </h2>
                     </div>
                     <div class="right">
+                        @if(auth()->user()->can('editor'))
                         @if ($totalInitialBalance == 0)
                         <a href="{{route('account.inputBalance')}}" class="main-btn warning-btn btn-hover"><i
                                 class="lni lni-plus"></i>Tambah Saldo
@@ -20,6 +21,7 @@
                             data-bs-target="#importModal"><i class="lni lni-plus"></i>Import Akun</button>
                         <button type="button" class="main-btn primary-btn btn-hover" data-bs-toggle="modal"
                             data-bs-target="#addModal"><i class="lni lni-plus"></i>Tambah Akun</button>
+                        @endif
                     </div>
                 </div>
                 @if ($errors->any())
@@ -73,7 +75,8 @@
                                     {{ $account->code }}
                                 </td>
                                 <td>
-                                    {{ $account->name }}
+                                    <a href="{{ route('transaction.index', ['account' => $account->code]) }}">
+                                        {{$account->name }} </a>
                                 </td>
                                 <td>
                                     <span class="text-uppercase">
