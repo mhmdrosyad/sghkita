@@ -38,6 +38,7 @@
             </div>
         </div>
     </div>
+    @if(auth()->user()->can('view accounting'))
     <div class="title-wrapper pt-30">
         <div class="row align-items-center">
             <div class="col-md-6">
@@ -51,12 +52,13 @@
         </div>
         <!-- end row -->
     </div>
+
     <div class="row">
         <div class="col-md-4">
             <div class="card">
                 <div class="card-body">
                     <h5>Laba Bulan Ini</h5>
-                    <p class="fw-semibold">Rp. {{number_format($totalRevenue,0, '.', '.')}}</p>
+                    <p class="fw-semibold">Rp. {{number_format($totalRevenueDifference,0, '.', '.')}}</p>
                 </div>
             </div>
         </div>
@@ -69,4 +71,5 @@
             </div>
         </div>
     </div>
+    @endif
 </x-app-layout>

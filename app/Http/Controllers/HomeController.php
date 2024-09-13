@@ -18,58 +18,72 @@ class HomeController extends Controller
         $bcaBalance = $bcaAccount->current_balance ?? 0;
         $bcaPayrollBalance = $bcaPayroll->current_balance ?? 0;
 
-        $period = Carbon::now()->format('m-Y');
+        $periodNow = Carbon::now()->format('m-Y');
+        $periodPrevious = Carbon::now()->subMonth()->format('m-Y');
 
         $accounts = Account::all();
-        $monthlyBalances = MonthlyBalance::where('month', $period)->get()->keyBy('account_code');
+
+        $monthlyBalancesNow = MonthlyBalance::where('month', $periodNow)->get()->keyBy('account_code');
+        $monthlyBalancesPrevious = MonthlyBalance::where('month', $periodPrevious)->get()->keyBy('account_code');
 
         $incomeAccounts = [];
         $outcomeAccounts = [];
         $totalIncome = 0;
         $totalOutcome = 0;
+        $totalIncomeDifference = 0;
+        $totalOutcomeDifference = 0;
+
 
         foreach ($accounts as $account) {
-            $balance = $monthlyBalances->get($account->code);
-            $accountBalance = $balance ? $balance->balance : 0;
+            // Ambil balance bulan sekarang
+            $balanceNow = $monthlyBalancesNow->get($account->code);
+            $accountBalanceNow = $balanceNow ? $balanceNow->balance : 0;
+
+            // Ambil balance bulan sebelumnya sebagai saldo awal bulan ini
+            $balancePrevious = $monthlyBalancesPrevious->get($account->code);
+            $accountBalancePrevious = $balancePrevious ? $balancePrevious->balance : 0;
+
+            // Hitung selisih balance (pendapatan/pengeluaran bulan ini)
+            $balanceDifference = $accountBalanceNow - $accountBalancePrevious;
 
             if ($account->position == 'revenue') {
                 $incomeAccounts[] = [
                     'account' => $account,
-                    'balance' => $accountBalance
+                    'balance' => $accountBalanceNow,
+                    'difference' => $balanceDifference // Pendapatan bulan ini
                 ];
-                $totalIncome += $accountBalance;
+                $totalIncome += $accountBalanceNow;
+                $totalIncomeDifference += $balanceDifference;
             } elseif ($account->position == 'expense') {
                 $outcomeAccounts[] = [
                     'account' => $account,
-                    'balance' => $accountBalance
+                    'balance' => $accountBalanceNow,
+                    'difference' => $balanceDifference // Pengeluaran bulan ini
                 ];
-                $totalOutcome += $accountBalance;
+                $totalOutcome += $accountBalanceNow;
+                $totalOutcomeDifference += $balanceDifference;
             }
         }
+
 
         $annualIncome = 0;
         $annualOutcome = 0;
 
         foreach ($accounts as $account) {
-            // Hitung selisih current_balance dengan starting_balance untuk setiap akun
             $balanceDifference = $account->current_balance - $account->initial_balance;
 
-            // Jika akun adalah revenue, tambahkan ke annualIncome
             if ($account->position == 'revenue') {
                 $annualIncome += $balanceDifference;
-            }
-            // Jika akun adalah expense, tambahkan ke annualOutcome
-            elseif ($account->position == 'expense') {
+            } elseif ($account->position == 'expense') {
                 $annualOutcome += $balanceDifference;
             }
         }
 
-        // Hitung total laba tahunan
         $annualRevenue = $annualIncome - $annualOutcome;
-
         $totalRevenue = $totalIncome - $totalOutcome;
+        $totalRevenueDifference = $totalIncomeDifference - $totalOutcomeDifference;
 
 
-        return view('dashboard', compact('foBalance', 'bcaBalance', 'bcaPayrollBalance', 'totalRevenue', 'annualRevenue'));
+        return view('dashboard', compact('foBalance', 'bcaBalance', 'bcaPayrollBalance', 'totalRevenueDifference', 'annualRevenue'));
     }
 }
