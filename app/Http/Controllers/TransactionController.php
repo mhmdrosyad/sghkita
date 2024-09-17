@@ -35,7 +35,7 @@ class TransactionController extends Controller
         $endDate = Carbon::parse($endDate)->endOfDay()->toDateTimeString();
 
         if ($request->ajax()) {
-            $query = LedgerEntry::with(['transaction.category'])->whereBetween('entry_date', [$startDate, $endDate]);
+            $query = LedgerEntry::with(['transaction.category', 'transaction.user'])->whereBetween('entry_date', [$startDate, $endDate]);
 
             if ($accountCode) {
                 $query->where('account_code', $accountCode);
@@ -64,6 +64,9 @@ class TransactionController extends Controller
                 })
                 ->addColumn('balance', function ($entry) {
                     return  number_format($entry->balance, 0, ',', '.') ?? 'N/A';
+                })
+                ->addColumn('fo', function ($entry) {
+                    return $entry->transaction->user->name ?? 'N/A';;
                 })
                 ->addColumn('action', function ($entry) {
                     return '<div class="action">

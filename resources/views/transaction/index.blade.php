@@ -152,6 +152,7 @@
                                 <th>Masuk</th>
                                 <th>Keluar</th>
                                 <th>Saldo</th>
+                                <th>Fo</th>
                                 @if(auth()->user()->can('edit transaction'))
                                 <th>Aksi</th>
                                 @endif
@@ -479,6 +480,7 @@
                         { data: 'debit', name: 'debit' },
                         { data: 'credit', name: 'credit' },
                         { data: 'balance', name: 'balance' },
+                        { data: 'fo', name: 'fo' },
                         { data: 'action', name: 'action', orderable: false, searchable: false },
                         { data: 'view_image', name: 'view_image' },
                     ],
@@ -557,6 +559,7 @@
                         { data: 'debit', name: 'debit' },
                         { data: 'credit', name: 'credit' },
                         { data: 'balance', name: 'balance' },
+                        { data: 'fo', name: 'fo' },
                         { data: 'view_image', name: 'view_image' },
                     ],
                     order: [[0, 'asc']]
@@ -615,9 +618,21 @@
 
         <script>
             function formatNumber(input) {
-                let value = input.value.replace(/\D/g, '');
-                input.value = new Intl.NumberFormat('id-ID').format(value);
+                // Pertahankan tanda minus jika ada
+                let value = input.value;
+                let isNegative = value.startsWith('-');
+                
+                // Hapus semua karakter non-angka kecuali tanda minus di awal
+                value = value.replace(/\D/g, '');
+                
+                // Format angka dengan NumberFormat
+                if (isNegative) {
+                    input.value = '-' + new Intl.NumberFormat('id-ID').format(value);
+                } else {
+                    input.value = new Intl.NumberFormat('id-ID').format(value);
+                }
             }
         </script>
+
     </x-slot>
 </x-app-layout>
