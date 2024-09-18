@@ -15,6 +15,7 @@ use App\Http\Controllers\CheckinController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\WigCheckinController;
 use App\Http\Controllers\InvoiceItemController;
+use App\Http\Controllers\KasbonController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -121,10 +122,16 @@ Route::middleware('auth')->group(function () {
         Route::post('/store', [WigcheckinController::class, 'store'])->name('wigcheckins.store');
     });
 
-
-
     Route::post('/payments/store', [PaymentsController::class, 'store'])->name('payments.store');
     Route::delete('/payments/delete/{id}', [PaymentsController::class, 'destroy'])->name('payments.destroy');
+
+    Route::prefix('kasbon')->group(function () {
+        Route::get('/', [KasbonController::class, 'index'])->name('kasbon.index');
+        Route::post('/', [KasbonController::class, 'store'])->name('kasbon.store');
+        Route::get('edit/{id}', [KasbonController::class, 'edit'])->name('kasbon.edit');
+        Route::put('toggle-status/{id}', [KasbonController::class, 'toggleStatus'])->name('kasbon.toggleStatus');
+        Route::delete('delete/{id}', [KasbonController::class, 'destroy'])->name('kasbon.destroy');
+    });
 });
 
 require __DIR__ . '/auth.php';
