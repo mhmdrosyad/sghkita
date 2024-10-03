@@ -21,6 +21,7 @@
                 </div>
             </div>
         </div>
+        @unlessrole('fo')
         <div class="col-md-3">
             <div class="card">
                 <div class="card-body">
@@ -37,8 +38,9 @@
                 </div>
             </div>
         </div>
+        @endunlessrole
     </div>
-    @if(auth()->user()->can('view accounting'))
+    @unlessrole('fo')
     <div class="title-wrapper pt-30">
         <div class="row align-items-center">
             <div class="col-md-6">
@@ -71,5 +73,6 @@
             </div>
         </div>
     </div>
-    @endif
+    @endunlessrole
+
 </x-app-layout>

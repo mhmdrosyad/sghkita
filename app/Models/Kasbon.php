@@ -19,6 +19,7 @@ class Kasbon extends Model
         'keterangan',
         'user_id',
         'is_paid',
+        'tipe'
     ];
 
     public function user()

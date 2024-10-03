@@ -16,37 +16,35 @@ class RoleSeeder extends Seeder
     {
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Buat Permissions
-        Permission::create(['name' => 'view dashboard']);
-        Permission::create(['name' => 'manage users']);
+        // Permission sidebar
+        Permission::create(['name' => 'view transaction']);
         Permission::create(['name' => 'view accounting']);
-        Permission::create(['name' => 'import']);
-        Permission::create(['name' => 'edit transaction']);
-        Permission::create(['name' => 'editor']);
         Permission::create(['name' => 'view reservation']);
+        Permission::create(['name' => 'view kasbon']);
+        Permission::create(['name' => 'view manage user']);
 
-        // Buat Roles dan berikan Permissions
+        // Permission transaction
+        Permission::create(['name' => 'import transaction']);
+        Permission::create(['name' => 'add fo transaction']);
+        Permission::create(['name' => 'add bank transaction']);
+        Permission::create(['name' => 'edit transaction']);
+
+        // Other permission
+        Permission::create(['name' => 'add user']);
+        Permission::create(['name' => 'manage user']);
+        Permission::create(['name' => 'manage role']);
+        Permission::create(['name' => 'manage permission']);
+        Permission::create(['name' => 'add kasbon']);
+        Permission::create(['name' => 'manage kasbon']);
+
+        // Role admin
         $roleAdmin = Role::create(['name' => 'admin']);
-        $roleAdmin->givePermissionTo('view dashboard');
-        $roleAdmin->givePermissionTo('manage users');
-        $roleAdmin->givePermissionTo('view accounting');
-        $roleAdmin->givePermissionTo('import');
-        $roleAdmin->givePermissionTo('edit transaction');
-        $roleAdmin->givePermissionTo('editor');
-        $roleAdmin->givePermissionTo('view reservation');
+        $roleAdmin->givePermissionTo(['view manage user', 'add user', 'manage user', 'manage role', 'manage permission']);
 
-        $roleEditor = Role::create(['name' => 'fo']);
-        $roleEditor->givePermissionTo('view dashboard');
-        $roleEditor->givePermissionTo('editor');
-        $roleEditor->givePermissionTo('view reservation');
-
-        $roleManager = Role::create(['name' => 'manager']);
-        $roleManager->givePermissionTo('view dashboard');
-        $roleManager->givePermissionTo('view accounting');
-        $roleManager->givePermissionTo('view reservation');
-
-        $roleOwner = Role::create(['name' => 'owner']);
-        $roleOwner->givePermissionTo('view dashboard');
-        $roleOwner->givePermissionTo('view accounting');
+        // Other role
+        Role::create(['name' => 'accounting']);
+        Role::create(['name' => 'manager']);
+        Role::create(['name' => 'fo']);
+        Role::create(['name' => 'owner']);
     }
 }

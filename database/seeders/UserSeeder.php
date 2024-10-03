@@ -29,7 +29,7 @@ class UserSeeder extends Seeder
         ]);
 
         $admin->assignRole('admin');
-        $rully->assignRole('admin');
+        $rully->assignRole('accounting');
 
         $etik = User::create([
             'name' => 'Etik Nurul',
