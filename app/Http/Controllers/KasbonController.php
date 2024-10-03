@@ -16,9 +16,13 @@ class KasbonController extends Controller
 {
     public function index()
     {
-        $kasbonPaids = Kasbon::where('is_paid', true)->get();
-        $kasbonUnPaids = Kasbon::where('is_paid', false)->get();
-        return view('kasbon.index', compact('kasbonPaids', 'kasbonUnPaids'));
+        $kasbonTemps = Kasbon::where('is_paid', false)
+            ->where('tipe', 'operasional')
+            ->get();
+        $kasbonUnPaids = Kasbon::where('is_paid', false)
+            ->where('tipe', 'pribadi')
+            ->get();
+        return view('kasbon.index', compact('kasbonTemps', 'kasbonUnPaids'));
     }
 
     public function store(Request $request)
@@ -28,6 +32,7 @@ class KasbonController extends Controller
             'nama' => 'required|string|max:255',
             'nominal' => 'required',
             'keterangan' => 'required|string',
+            'tipe' => 'required|in:pribadi,operasional',
         ]);
 
         Kasbon::create([
@@ -37,6 +42,7 @@ class KasbonController extends Controller
             'keterangan' => $validatedData['keterangan'],
             'user_id' => Auth::id(),
             'is_paid' => false,
+            'tipe' => $validatedData['tipe'],
         ]);
 
         $category = Category::where('code', '036')->first();

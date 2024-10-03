@@ -11,7 +11,7 @@
                         </h2>
                     </div>
                     <div class="right">
-                        @if(auth()->user()->can('import'))
+                        @if(auth()->user()->can('import transaction'))
                         <button type="button" class="main-btn success-btn btn-hover" data-bs-toggle="modal"
                             data-bs-target="#importModal"><svg id="Upload" width="24" height="24" viewBox="0 0 26 24"
                                 fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -40,10 +40,8 @@
                                     </g>
                                 </g>
                             </svg></i>Mutasi</button> --}}
-                        @if(auth()->user()->can('editor'))
-                        @if((Auth::user()->hasRole('fo') && request('account') == 101) ||
-                        (!Auth::user()->hasRole('fo')))
-
+                        @if((auth()->user()->can('add fo transaction') && request('account') == 101) ||
+                        (auth()->user()->can('add bank transaction') && request('account') != 101))
                         <button type="button" class="main-btn primary-btn btn-hover" data-bs-toggle="modal"
                             data-bs-target="#addModal">
                             <svg id="Paper Download" width="24px" height="24px" viewBox="0 0 24 24" version="1.1"
@@ -79,7 +77,6 @@
                                 </g>
                             </svg>Transaksi Keluar
                         </button>
-                        @endif
                         @endif
                     </div>
                 </div>
@@ -126,7 +123,6 @@
                                 <button type="submit" class="main-btn primary-btn btn-hover">
                                     <svg id="Filter 2" width="24px" height="24px" viewBox="0 0 24 24" version="1.1"
                                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                                        <title>Iconly/Light-Outline/Filter 2</title>
                                         <g id="Iconly/Light-Outline/Filter-2" stroke="none" stroke-width="1.5"
                                             fill="none" fill-rule="evenodd">
                                             <g id="Filter-2" transform="translate(2.000000, 2.000000)" fill="#ffffff">

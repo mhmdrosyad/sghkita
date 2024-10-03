@@ -7,11 +7,11 @@
                 <div class="title d-flex flex-wrap align-items-center justify-content-between mb-3">
                     <div class="left">
                         <h2>
-                            Kasbon Karyawan
+                            Kasbon Operasional
                         </h2>
                     </div>
                     <div class="right">
-                        @if(auth()->user()->can('editor'))
+                        @if(auth()->user()->can('add kasbon'))
                         <button type="button" class="main-btn primary-btn btn-hover" data-bs-toggle="modal"
                             data-bs-target="#addModal"><i class="lni lni-plus"></i>Kasbon Baru</button>
                         @endif
@@ -62,9 +62,123 @@
                                 <th>
                                     <h6>Status</h6>
                                 </th>
+                                @if(auth()->user()->can('manage kasbon'))
                                 <th>
                                     <h6>Aksi</h6>
                                 </th>
+                                @endif
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($kasbonTemps as $kasbon)
+                            <tr>
+                                <td class="text-center">
+                                    {{ $loop->iteration }}
+                                </td>
+                                <td>
+                                    {{$kasbon->tgl_pinjam }}
+                                </td>
+                                <td>
+                                    {{$kasbon->nama }}
+                                </td>
+                                <td>
+                                    {{ number_format($kasbon->nominal, 0, ',', '.') }}
+                                </td>
+                                <td>
+                                    {{$kasbon->keterangan }}
+                                </td>
+                                <td>
+                                    {{$kasbon->user->name }}
+                                </td>
+                                <td>
+                                    <span class="text-sm bg-danger text-white py-1 px-2">{{$kasbon->is_paid ? 'Lunas' :
+                                        'Belum
+                                        Lunas'
+                                        }}</span>
+                                </td>
+                                @if(auth()->user()->can('manage kasbon'))
+
+                                <td>
+                                    <div class="action">
+                                        {{-- <a href="{{ route('kasbon.edit', $kasbon->id) }}" class="text-primary">
+                                            <i class="lni lni-pencil"></i>
+                                        </a> --}}
+                                        <button class="text-success" onclick="confirmPaid('{{ $kasbon->id }}')">
+                                            <i class="lni lni-checkmark-circle"></i>
+                                        </button>
+                                        <button class="text-danger" onclick="confirmDelete('{{ $kasbon->id }}')">
+                                            <i class="lni lni-trash-can"></i>
+                                        </button>
+                                        <form id="delete-form-{{ $kasbon->id }}"
+                                            action="{{ route('kasbon.destroy', $kasbon->id) }}" method="POST"
+                                            style="display: none;">
+                                            @csrf
+                                            @method('DELETE')
+                                        </form>
+                                        <form id="paid-form-{{ $kasbon->id }}"
+                                            action="{{ route('kasbon.toggleStatus', $kasbon->id) }}" method="POST"
+                                            style="display: none;">
+                                            @csrf
+                                            @method('PUT')
+                                        </form>
+                                    </div>
+                                </td>
+                                @endif
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                    <!-- end table -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="mb-30">
+                <div class="title d-flex flex-wrap align-items-center justify-content-between mb-3">
+                    <div class="left">
+                        <h2>
+                            Kasbon Karyawan
+                        </h2>
+                    </div>
+                    {{-- <div class="right">
+                        @if(auth()->user()->can('add kasbon'))
+                        <button type="button" class="main-btn primary-btn btn-hover" data-bs-toggle="modal"
+                            data-bs-target="#addModal"><i class="lni lni-plus"></i>Kasbon Baru</button>
+                        @endif
+                    </div> --}}
+                </div>
+                <div class="table-wrapper table-responsive">
+                    <table id="kasbon-table" class="table striped-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <h6>No</h6>
+                                </th>
+                                <th>
+                                    <h6>Tanggal Pinjam</h6>
+                                </th>
+                                <th>
+                                    <h6>Nama Karyawan</h6>
+                                </th>
+                                <th>
+                                    <h6>Nominal</h6>
+                                </th>
+                                <th>
+                                    <h6>Keperluan</h6>
+                                </th>
+                                <th>
+                                    <h6>Operator</h6>
+                                </th>
+                                <th>
+                                    <h6>Status</h6>
+                                </th>
+                                @if(auth()->user()->can('edit kasbon'))
+                                <th>
+                                    <h6>Aksi</h6>
+                                </th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -94,6 +208,8 @@
                                         Lunas'
                                         }}</span>
                                 </td>
+                                @if(auth()->user()->can('edit kasbon'))
+
                                 <td>
                                     <div class="action">
                                         {{-- <a href="{{ route('kasbon.edit', $kasbon->id) }}" class="text-primary">
@@ -119,102 +235,7 @@
                                         </form>
                                     </div>
                                 </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                    <!-- end table -->
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <div class="mb-30">
-                <div class="title d-flex flex-wrap align-items-center justify-content-between mb-3">
-                    <div class="left">
-                        <h2>
-                            History Kasbon
-                        </h2>
-                    </div>
-                </div>
-                <div class="table-wrapper table-responsive">
-                    <table id="history-table" class="table striped-table">
-                        <thead>
-                            <tr>
-                                <th>
-                                    <h6>No</h6>
-                                </th>
-                                <th>
-                                    <h6>Tanggal Pinjam</h6>
-                                </th>
-                                <th>
-                                    <h6>Tanggal Kembali</h6>
-                                </th>
-                                <th>
-                                    <h6>Nama Karyawan</h6>
-                                </th>
-                                <th>
-                                    <h6>Nominal</h6>
-                                </th>
-                                <th>
-                                    <h6>Keperluan</h6>
-                                </th>
-                                <th>
-                                    <h6>Operator</h6>
-                                </th>
-                                <th>
-                                    <h6>Status</h6>
-                                </th>
-                                <th>
-                                    <h6>Aksi</h6>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($kasbonPaids as $kasbon)
-                            <tr>
-                                <td class="text-center">
-                                    {{ $loop->iteration }}
-                                </td>
-                                <td>
-                                    {{$kasbon->tgl_pinjam }}
-                                </td>
-                                <td>
-                                    {{$kasbon->tgl_kembali }}
-                                </td>
-                                <td>
-                                    {{$kasbon->nama }}
-                                </td>
-                                <td>
-                                    {{ number_format($kasbon->nominal, 0, ',', '.') }}
-                                </td>
-                                <td>
-                                    {{$kasbon->keterangan }}
-                                </td>
-                                <td>
-                                    {{$kasbon->user->name }}
-                                </td>
-                                <td>
-                                    <span class="text-sm bg-success text-white py-1 px-2">{{$kasbon->is_paid ? 'Lunas' :
-                                        'Belum
-                                        Lunas'
-                                        }}</span>
-                                </td>
-                                <td>
-                                    <div class="action">
-                                        <button class="text-success" onclick="confirmPaid('{{ $kasbon->id }}')">
-                                            <i class="lni lni-reload"></i>
-                                        </button>
-                                        <form id="paid-form-{{ $kasbon->id }}"
-                                            action="{{ route('kasbon.toggleStatus', $kasbon->id) }}" method="POST"
-                                            style="display: none;">
-                                            @csrf
-                                            @method('PUT')
-                                        </form>
-                                    </div>
-                                </td>
-
+                                @endif
                             </tr>
                             @endforeach
                         </tbody>
@@ -258,8 +279,18 @@
                             <label>Nominal</label>
                             <input name="nominal" type="text" placeholder="masukan nominal" required />
                         </div>
+                        <div class="select-style-1">
+                            <label>Keperluan</label>
+                            <div class="select-position">
+                                <select class="text-capitalize" name="tipe" required>
+                                    <option value="" disabled selected>Pilih jenis</option>
+                                    <option value="operasional">Operasional</option>
+                                    <option value="pribadi">Kasbon Pribadi</option>
+                                </select>
+                            </div>
+                        </div>
                         <div class="input-style-1">
-                            <label>Alasan</label>
+                            <label>Keterangan</label>
                             <textarea name="keterangan" type="text" placeholder="masukkan tujuan pinjam"
                                 required></textarea>
                         </div>

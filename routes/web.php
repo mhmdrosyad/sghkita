@@ -16,6 +16,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\WigCheckinController;
 use App\Http\Controllers\InvoiceItemController;
 use App\Http\Controllers\KasbonController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -131,6 +134,29 @@ Route::middleware('auth')->group(function () {
         Route::get('edit/{id}', [KasbonController::class, 'edit'])->name('kasbon.edit');
         Route::put('toggle-status/{id}', [KasbonController::class, 'toggleStatus'])->name('kasbon.toggleStatus');
         Route::delete('delete/{id}', [KasbonController::class, 'destroy'])->name('kasbon.destroy');
+    });
+
+    Route::prefix('roles')->group(function () {
+        Route::get('/', [RoleController::class, 'index'])->name('roles.index');
+        Route::post('/', [RoleController::class, 'store'])->name('roles.store');
+        Route::get('/roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit');
+        Route::put('/roles/{role}/update', [RoleController::class, 'update'])->name('roles.update');
+        Route::delete('delete/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
+    });
+
+    Route::prefix('permissions')->group(function () {
+        Route::post('/', [PermissionController::class, 'store'])->name('permission.store');
+        Route::delete('delete/{id}', [PermissionController::class, 'destroy'])->name('permission.destroy');
+    });
+
+
+    Route::prefix('user')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('user.index');
+        Route::post('/', [UserController::class, 'store'])->name('user.store');
+        Route::get('edit/{user}', [UserController::class, 'edit'])->name('user.edit');
+        Route::put('/{user}/update', [UserController::class, 'update'])->name('user.update');
+        Route::delete('delete/{user}', [UserController::class, 'destroy'])->name('user.destroy');
+        Route::post('{id}/toggle-status', [UserController::class, 'toggleStatus'])->name('user.toggleStatus');
     });
 });
 
