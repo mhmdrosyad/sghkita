@@ -77,6 +77,12 @@
                                 </g>
                             </svg>Transaksi Keluar
                         </button>
+                        {{-- <form action="{{ route('balance.current.month') }}" method="POST">
+                            @csrf
+                            <button class="main-btn warning-btn btn-hover" type="submit" class="btn btn-primary">
+                                Balance Saldo Bulan Ini
+                            </button>
+                        </form> --}}
                         @endif
                     </div>
                 </div>

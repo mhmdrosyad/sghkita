@@ -16,6 +16,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\WigCheckinController;
 use App\Http\Controllers\InvoiceItemController;
 use App\Http\Controllers\KasbonController;
+use App\Http\Controllers\MonthlyBalanceController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -57,6 +58,7 @@ Route::middleware('auth')->group(function () {
         Route::post('store', [TransactionController::class, 'store'])->name('transaction.store');
         Route::delete('delete/{id}', [TransactionController::class, 'destroy'])->name('transaction.destroy');
         Route::post('import', [TransactionController::class, 'import'])->name('transaction.import');
+        Route::post('balance-current-month', [TransactionController::class, 'balanceCurrentMonth'])->name('balance.current.month');
     });
 
     Route::prefix('accounting')->group(function () {
@@ -133,6 +135,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [KasbonController::class, 'store'])->name('kasbon.store');
         Route::get('edit/{id}', [KasbonController::class, 'edit'])->name('kasbon.edit');
         Route::put('toggle-status/{id}', [KasbonController::class, 'toggleStatus'])->name('kasbon.toggleStatus');
+        Route::put('payment-payroll/{id}', [KasbonController::class, 'payroll'])->name('kasbon.payroll');
         Route::delete('delete/{id}', [KasbonController::class, 'destroy'])->name('kasbon.destroy');
     });
 
@@ -157,6 +160,11 @@ Route::middleware('auth')->group(function () {
         Route::put('/{user}/update', [UserController::class, 'update'])->name('user.update');
         Route::delete('delete/{user}', [UserController::class, 'destroy'])->name('user.destroy');
         Route::post('{id}/toggle-status', [UserController::class, 'toggleStatus'])->name('user.toggleStatus');
+    });
+
+    Route::prefix('monthly-balance')->group(function () {
+        Route::get('/', [MonthlyBalanceController::class, 'index'])->name('monthly_balance.index');
+        Route::delete('delete/{user}', [MonthlyBalanceController::class, 'destroy'])->name('monthly_balance.destroy');
     });
 });
 

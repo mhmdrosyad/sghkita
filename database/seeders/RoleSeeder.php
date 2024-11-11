@@ -36,6 +36,7 @@ class RoleSeeder extends Seeder
         Permission::create(['name' => 'manage permission']);
         Permission::create(['name' => 'add kasbon']);
         Permission::create(['name' => 'manage kasbon']);
+        Permission::create(['name' => 'manage kasbon payroll']);
 
         // Role admin
         $roleAdmin = Role::create(['name' => 'admin']);

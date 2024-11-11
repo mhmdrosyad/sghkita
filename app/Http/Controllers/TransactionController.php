@@ -331,6 +331,182 @@ class TransactionController extends Controller
         }
     }
 
+    public function balanceCurrentMonth()
+    {
+        $currentMonth = Carbon::now()->format('m-Y');
+        $this->balancing($currentMonth);
+
+        return redirect()->back()->with('success', 'Saldo bulan ini sudah berhasil di-balance.');
+    }
+
+    private function balancing($monthYear)
+    {
+        $currentMonth = Carbon::createFromFormat('m-Y', $monthYear);
+        LedgerEntry::whereHas('transaction', function ($query) use ($currentMonth) {
+            $query->whereMonth('transaction_at', $currentMonth->month)
+                ->whereYear('transaction_at', $currentMonth->year);
+        })->delete();
+
+        $transactions = $this->transactionModel->whereMonth('transaction_at', $currentMonth->month)
+            ->whereYear('transaction_at', $currentMonth->year)
+            ->get();
+
+        $accounts = Account::all();
+        if (MonthlyBalance::where('month', $monthYear)->exists()) {
+            MonthlyBalance::where('month', $monthYear)->delete();
+        }
+
+        foreach ($accounts as $account) {
+            $startingBalance = $this->getStartingBalance($account, $currentMonth);
+            $account->current_balance = $startingBalance;
+            $account->save();
+
+            if (!MonthlyBalance::where('account_code', $account->code)
+                ->where('month', $monthYear)
+                ->exists()) {
+                $newMonthlyBalance = new MonthlyBalance();
+                $newMonthlyBalance->account_code = $account->code;
+                $newMonthlyBalance->month = $monthYear; // Menyimpan bulan dalam format m-Y
+                $newMonthlyBalance->balance = $startingBalance; // menggunakan saldo saat ini
+                $newMonthlyBalance->save();
+            }
+        }
+
+
+        foreach ($transactions as $transaction) {
+            // Ambil kategori untuk transaksi ini
+            $category = Category::where('code', $transaction->category_code)->first();
+            if (!$category) continue; // Jika tidak ada kategori, lanjutkan
+
+            $debetAccount = $category->debitAccount;
+            $creditAccount = $category->creditAccount;
+
+            $nominal = $transaction->nominal;
+
+            if ($debetAccount) {
+                if ($debetAccount->position == 'asset') {
+                    $debetAccount->current_balance += $nominal;
+                    $this->updateMonthlyBalance($debetAccount, $monthYear, $nominal);
+                } elseif ($debetAccount->position == 'liability') {
+                    $debetAccount->current_balance -= $nominal;
+                    $this->updateMonthlyBalance($debetAccount, $monthYear, -$nominal);
+                } else {
+                    $debetAccount->current_balance += $nominal;
+                    $this->updateMonthlyBalance($debetAccount, $monthYear, $nominal);
+                    $this->updateRevenueAccount($nominal, $debetAccount->position, $monthYear);
+                }
+                $debetAccount->save();
+
+                LedgerEntry::create([
+                    'transaction_id' => $transaction->id,
+                    'account_code' => $debetAccount->code,
+                    'entry_date' => $transaction->transaction_at,
+                    'entry_type' => 'debit',
+                    'amount' => $nominal,
+                    'balance' => $debetAccount->current_balance,
+                ]);
+            }
+
+            if ($creditAccount) {
+                if ($creditAccount->position == 'asset') {
+                    $creditAccount->current_balance -= $nominal;
+                    $this->updateMonthlyBalance($creditAccount, $monthYear, -$nominal);
+                } elseif ($creditAccount->position == 'liability') {
+                    $creditAccount->current_balance += $nominal;
+                    $this->updateMonthlyBalance($creditAccount, $monthYear, $nominal);
+                } else {
+                    $creditAccount->current_balance += $nominal;
+                    $this->updateMonthlyBalance($creditAccount, $monthYear, $nominal);
+                    $this->updateRevenueAccount($nominal, $creditAccount->position, $monthYear);
+                }
+                $creditAccount->save();
+
+                LedgerEntry::create([
+                    'transaction_id' => $transaction->id,
+                    'account_code' => $creditAccount->code,
+                    'entry_date' => $transaction->transaction_at,
+                    'entry_type' => 'credit',
+                    'amount' => $nominal,
+                    'balance' => $creditAccount->current_balance,
+                ]);
+            }
+        }
+    }
+    // private function balancing($monthYear)
+    // {
+    //     // Dapatkan semua akun
+    //     $accounts = Account::all();
+    //     $carbonDate = Carbon::createFromFormat('m-Y', $monthYear);
+
+    //     foreach ($accounts as $account) {
+    //         // Dapatkan saldo awal bulan ini dari bulan sebelumnya atau current_balance
+    //         $initialBalance = $this->getStartingBalance($account, $carbonDate);
+
+    //         // Ambil semua transaksi untuk bulan ini
+    //         $transactions = LedgerEntry::where('account_code', $account->code)
+    //             ->whereMonth('entry_date', Carbon::parse($carbonDate)->month)
+    //             ->whereYear('entry_date', Carbon::parse($carbonDate)->year)
+    //             ->orderBy('entry_date', 'asc')
+    //             ->get();
+
+    //         $runningBalance = $initialBalance;
+
+    //         // Hitung ulang saldo berdasarkan transaksi bulan ini
+    //         foreach ($transactions as $transaction) {
+    //             $category = Category::where('code', $transaction->transaction->category->code)->first();
+
+    //             if (!$category) {
+    //                 return redirect()->back()->withErrors(['category_code' => 'Invalid category code.']);
+    //             }
+    //             $debetAccount = $category->debitAccount;
+    //             $creditAccount = $category->creditAccount;
+
+    //             if ($debetAccount) {
+    //                 if ($account->position == 'asset') {
+    //                     $runningBalance += $transaction->amount;
+    //                 } elseif ($account->position == 'liability') {
+    //                     $runningBalance -= $transaction->amount;
+    //                 } else {
+    //                     $runningBalance += $transaction->amount;
+    //                     $this->updateRevenueAccount($transaction->amount, $account->position, $monthYear);
+    //                 }
+    //             }
+
+    //             if ($creditAccount) {
+    //                 if ($account->position == 'asset') {
+    //                     $runningBalance -= $transaction->amount;
+    //                 } elseif ($account->position == 'liability') {
+    //                     $runningBalance += $transaction->amount;
+    //                 } else {
+    //                     $runningBalance -= $transaction->amount;
+    //                     $this->updateRevenueAccount(-$transaction->amount, $account->position, $monthYear);
+    //                 }
+    //             }
+    //         }
+
+
+    //         // Dapatkan MonthlyBalance untuk akun dan bulan ini
+    //         $monthlyBalance = MonthlyBalance::where('account_code', $account->code)
+    //             ->where('month', $monthYear)
+    //             ->first();
+
+    //         // Jika tidak ada MonthlyBalance, buat baru
+    //         if (!$monthlyBalance) {
+    //             $monthlyBalance = new MonthlyBalance();
+    //             $monthlyBalance->account_code = $account->code;
+    //             $monthlyBalance->month = $monthYear;
+    //         }
+
+    //         // Perbarui saldo di MonthlyBalance
+    //         $monthlyBalance->balance = $runningBalance;
+    //         $monthlyBalance->save();
+
+    //         // Update saldo current_balance di akun jika diperlukan
+    //         $account->current_balance = $runningBalance;
+    //         $account->save();
+    //     }
+    // }
+
     private function updateMonthlyBalance(Account $account, $currentMonth, $nominal)
     {
         $monthlyBalance = MonthlyBalance::where('account_code', $account->code)
@@ -374,5 +550,24 @@ class TransactionController extends Controller
 
         $revenueAccount->save();
         $this->updateMonthlyBalance($revenueAccount, $currentMonth, $amount * ($type == 'expense' ? -1 : 1));
+    }
+
+    private function getStartingBalance($account, $currentMonth)
+    {
+        // Dapatkan saldo bulan sebelumnya
+        $previousMonth = Carbon::parse($currentMonth)->subMonth()->format('m-Y');
+
+        // Coba ambil saldo dari MonthlyBalance bulan sebelumnya
+        $previousMonthlyBalance = MonthlyBalance::where('account_code', $account->code)
+            ->where('month', $previousMonth)
+            ->first();
+
+        // Jika saldo bulan sebelumnya ada, gunakan saldo tersebut sebagai saldo awal
+        if ($previousMonthlyBalance) {
+            return $previousMonthlyBalance->balance;
+        }
+
+        // Jika tidak ada saldo bulan sebelumnya, gunakan saldo current_balance dari akun
+        return $account->current_balance;
     }
 }

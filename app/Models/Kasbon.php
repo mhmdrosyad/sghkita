@@ -16,6 +16,7 @@ class Kasbon extends Model
         'tgl_kembali',
         'nama',
         'nominal',
+        'nominal_kembali',
         'keterangan',
         'user_id',
         'is_paid',
