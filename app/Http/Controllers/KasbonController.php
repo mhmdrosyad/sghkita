@@ -16,13 +16,8 @@ class KasbonController extends Controller
 {
     public function index()
     {
-        $kasbonTemps = Kasbon::where('is_paid', false)
-            ->where('tipe', 'operasional')
-            ->get();
-        $kasbonUnPaids = Kasbon::where('is_paid', false)
-            ->where('tipe', 'pribadi')
-            ->get();
-        return view('kasbon.index', compact('kasbonTemps', 'kasbonUnPaids'));
+        $kasbons = Kasbon::where('is_paid', false)->get();
+        return view('kasbon.index', compact('kasbons'));
     }
 
     public function store(Request $request)
@@ -44,8 +39,48 @@ class KasbonController extends Controller
             'is_paid' => false,
             'tipe' => $validatedData['tipe'],
         ]);
+        return redirect()->back()->with('success', 'Kasbon baru berhasil ditambahkan!');
+    }
 
-        $category = Category::where('code', '036')->first();
+    public function destroy($id)
+    {
+        $kasbon = Kasbon::findOrFail($id);
+        $kasbon->delete();
+        return redirect()->route('kasbon.index')->with('success', 'Kasbon deleted successfully');
+    }
+
+    public function toggleStatus($id)
+    {
+        $kasbon = Kasbon::findOrFail($id);
+        $kasbon->is_paid = !$kasbon->is_paid;
+        if ($kasbon->is_paid) {
+            $kasbon->tgl_kembali = Carbon::now();
+        } else {
+            $kasbon->tgl_kembali = null;
+        }
+        $kasbon->save();
+        return redirect()->back()->with('success', 'Status kasbon berhasil diubah!');
+    }
+
+    public function payroll($id, Request $request)
+    {
+        $transactionModel = new Transaction();
+        $jumlahPembayaran = $request->input('nominal');
+        $kasbon = Kasbon::findOrFail($id);
+        $kasbon->tgl_kembali = Carbon::now();
+        if (!$kasbon->nominal_kembali) {
+            $kasbon->nominal_kembali = 0;
+        }
+        $kasbon->nominal_kembali += $jumlahPembayaran;
+
+        if ($kasbon->nominal_kembali > $kasbon->nominal) {
+            return redirect()->back()->with('error', 'Jumlah pembayaran melebihi nominal kasbon.');
+        }
+        if ($kasbon->nominal_kembali >= $kasbon->nominal) {
+            $kasbon->is_paid = true;
+        }
+
+        $category = Category::where('code', '078')->first();
 
         if (!$category) {
             return redirect()->back()->withErrors(['category_code' => 'Invalid category code.']);
@@ -54,12 +89,12 @@ class KasbonController extends Controller
         $debetAccount = $category->debitAccount;
         $creditAccount = $category->creditAccount;
 
-        $nominal = str_replace('.', '', $request->nominal);
+        $nominal = $jumlahPembayaran;
 
-        $transaction = Transaction::create([
-            'transaction_at' => now(),
-            'description' => 'Kasbon ' . $request->nama . 'untuk ' . $request->keterangan,
-            'category_code' => '036',
+        $transaction = $transactionModel->create([
+            'transaction_at' => $request->tanggal ?? now(),
+            'description' => 'Pembayaran kasbon a.n ' . $kasbon->nama . ' (' . $kasbon->tgl_pinjam . ')',
+            'category_code' => '078',
             'nominal' => $nominal,
             'user_id' => Auth::id(),
         ]);
@@ -131,111 +166,9 @@ class KasbonController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('success', 'Kasbon baru berhasil ditambahkan!');
-    }
 
-    public function destroy($id)
-    {
-        $kasbon = Kasbon::findOrFail($id);
-        $category = Category::where('code', '036')->first();
-
-        if (!$category) {
-            return redirect()->back()->withErrors(['category_code' => 'Invalid category code.']);
-        }
-
-        $debetAccount = $category->debitAccount;
-        $creditAccount = $category->creditAccount;
-
-        $nominal = str_replace('.', '', -$kasbon->nominal);
-
-        $transaction = Transaction::create([
-            'transaction_at' => now(),
-            'description' => 'Revisi data kasbon ' . $kasbon->nama . ' (' . $kasbon->tgl_pinjam . ')',
-            'category_code' => '036',
-            'nominal' => $nominal,
-            'user_id' => Auth::id(),
-        ]);
-
-        $currentMonth = Carbon::now()->format('m-Y');
-
-        $accounts = Account::all();
-        foreach ($accounts as $account) {
-            $existingMonthlyBalance = MonthlyBalance::where('account_code', $account->code)
-                ->where('month', $currentMonth)
-                ->first();
-
-            if (!$existingMonthlyBalance) {
-                $newMonthlyBalance = new MonthlyBalance();
-                $newMonthlyBalance->account_code = $account->code;
-                $newMonthlyBalance->month = $currentMonth;
-                $newMonthlyBalance->balance = $account->current_balance;
-                $newMonthlyBalance->save();
-            }
-        }
-
-        if ($debetAccount) {
-            if ($debetAccount->position == 'asset') {
-                $debetAccount->current_balance += $nominal;
-                $this->updateMonthlyBalance($debetAccount, $currentMonth, $nominal);
-            } elseif ($debetAccount->position == 'liability') {
-                $debetAccount->current_balance -= $nominal;
-                $this->updateMonthlyBalance($debetAccount, $currentMonth, -$nominal);
-            } else {
-                $debetAccount->current_balance += $nominal;
-                $this->updateMonthlyBalance($debetAccount, $currentMonth, $nominal);
-                $this->updateRevenueAccount($nominal, $debetAccount->position, $currentMonth);
-            }
-            $debetAccount->save();
-
-            LedgerEntry::create([
-                'transaction_id' => $transaction->id,
-                'account_code' => $debetAccount->code,
-                'entry_date' => $transaction->transaction_at,
-                'entry_type' => 'debit',
-                'amount' => $nominal,
-                'balance' => $debetAccount->current_balance,
-            ]);
-        }
-
-        if ($creditAccount) {
-            if ($creditAccount->position == 'asset') {
-                $creditAccount->current_balance -= $nominal;
-                $this->updateMonthlyBalance($creditAccount, $currentMonth, -$nominal);
-            } elseif ($creditAccount->position == 'liability') {
-                $creditAccount->current_balance += $nominal;
-                $this->updateMonthlyBalance($creditAccount, $currentMonth, $nominal);
-            } else {
-                $creditAccount->current_balance += $nominal;
-                $this->updateMonthlyBalance($creditAccount, $currentMonth, $nominal);
-                $this->updateRevenueAccount($nominal, $creditAccount->position, $currentMonth);
-            }
-            $creditAccount->save();
-
-            LedgerEntry::create([
-                'transaction_id' => $transaction->id,
-                'account_code' => $creditAccount->code,
-                'entry_date' => $transaction->transaction_at,
-                'entry_type' => 'credit',
-                'amount' => $nominal,
-                'balance' => $creditAccount->current_balance,
-            ]);
-        }
-
-        $kasbon->delete();
-        return redirect()->route('kasbon.index')->with('success', 'Kasbon deleted successfully');
-    }
-
-    public function toggleStatus($id)
-    {
-        $kasbon = Kasbon::findOrFail($id);
-        $kasbon->is_paid = !$kasbon->is_paid;
-        if ($kasbon->is_paid) {
-            $kasbon->tgl_kembali = Carbon::now();
-        } else {
-            $kasbon->tgl_kembali = null;
-        }
         $kasbon->save();
-        return redirect()->back()->with('success', 'Status kasbon berhasil diubah!');
+        return redirect()->back()->with('success', 'Pembayaran kasbon payroll sudah berhasil!');
     }
 
     private function updateMonthlyBalance(Account $account, $currentMonth, $nominal)
